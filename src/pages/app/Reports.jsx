@@ -57,7 +57,7 @@ const Reports = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `/request?search=${query}${
+        `/admin/reports?search=${query}${
           initialDate
             ? `&startDate=${convertToUTCTimestamp(
                 formatDateToMMDDYYYY(initialDate)
@@ -218,20 +218,19 @@ const Reports = () => {
 
       <div className="w-full overflow-x-auto lg:overflow-x-hidden flex flex-col justify-start items-start">
         <div className="min-w-[960px] w-full border-t border-x h-[49px] bg-[#FCFDFD] border-gray-300 rounded-t-[14px] grid grid-cols-12 ">
-          <span className="w-full px-4 col-span-2 flex items-center justify-start h-full ">
-            <span className="text-[13px] font-medium">Name</span>
-          </span>
-          <span className="w-full col-span-2 flex items-center justify-start h-full ">
-            <span className="text-[13px] font-medium">Email Address</span>
-          </span>
-          <span className="w-full col-span-2 flex items-center justify-start h-full ">
-            <span className="text-[13px] font-medium">Product Name</span>
-          </span>
-          <span className="w-full col-span-2 flex items-center justify-start h-full ">
-            <span className="text-[13px] font-medium">Category</span>
+          <span className="w-full px-4 col-span-3 flex items-center justify-start h-full ">
+            <span className="text-[13px] font-medium">User Name</span>
           </span>
           <span className="w-full col-span-3 flex items-center justify-start h-full ">
-            <span className="text-[13px] font-medium">Description</span>
+            <span className="text-[13px] font-medium">Reason</span>
+          </span>
+          <span className="w-full col-span-2 flex items-center justify-start h-full ">
+            <span className="text-[13px] font-medium">Date</span>
+          </span>
+          <span className="w-full col-span-3 flex items-center justify-start h-full ">
+            <span className="text-[13px] font-medium">
+              Reported User & Store
+            </span>
           </span>
 
           <span className="w-full col-span-1 flex items-center justify-end h-full  px-4">
@@ -253,43 +252,134 @@ const Reports = () => {
                   }}
                   className="w-full cursor-pointer grid grid-cols-12 h-[77px] text-[#202224] "
                 >
-                  <span className="w-full px-4 col-span-2 flex items-center gap-2 justify-start h-full ">
-                    <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
-                      <img
-                        src={
-                          request?.user?.profilePicture ||
-                          "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
-                        }
-                        alt="store_image"
-                        className="w-[38px] h-[38px] rounded-full"
-                      />
+                  {request?.reportedByUser ? (
+                    <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
+                      <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                        <img
+                          src={
+                            request?.reportedByUser?.profilePicture ||
+                            "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                          }
+                          alt="store_image"
+                          className="w-[38px] h-[38px] rounded-full"
+                        />
+                      </span>
+                      <span className="text-[13px] font-normal">
+                        {request?.reportedByUser?.name || "N/A"}
+                      </span>
                     </span>
-                    <span className="text-[13px] font-normal">
-                      {request?.user?.name || "N/A"}
+                  ) : (
+                    <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
+                      <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                        <img
+                          src={
+                            request?.reportedByStore?.profilePicture ||
+                            "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                          }
+                          alt="store_image"
+                          className="w-[38px] h-[38px] rounded-full"
+                        />
+                      </span>
+                      <span className="text-[13px] font-normal">
+                        {request?.reportedByStore?.name || "N/A"}
+                      </span>
                     </span>
-                  </span>
-                  <span className="w-full col-span-2 flex items-center justify-start h-full ">
-                    <span className="text-[13px] font-normal">
-                      {request?.user?.email || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-2 flex items-center justify-start h-full ">
-                    <span className="text-[13px] font-normal">
-                      {request?.name || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-2 flex items-center justify-start h-full ">
-                    <span className="text-[13px] font-normal">
-                      {request?.category?.name || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-3 flex items-center justify-start h-full ">
+                  )}
+
+                  <span className="w-full col-span-3 pr-2 flex items-center justify-start h-full ">
                     <span className="text-[13px] font-normal">
                       {request?.description?.length > 50
                         ? request?.description?.slice(0, 50) + "..."
                         : request?.description}
                     </span>
                   </span>
+
+                  <span className="w-full col-span-2 flex items-center justify-start h-full ">
+                    <span className="text-[13px] font-normal">
+                      {formatDateToMMDDYYYY(request?.createdAt)}
+                    </span>
+                  </span>
+                  {request?.user ? (
+                    <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
+                      <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                        <img
+                          src={
+                            request?.user?.profilePicture ||
+                            "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                          }
+                          alt="store_image"
+                          className="w-[38px] h-[38px] rounded-full"
+                        />
+                      </span>
+                      <span className="text-[13px] font-normal">
+                        {request?.user?.name || "N/A"}
+                      </span>
+                    </span>
+                  ) : request?.store ? (
+                    <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
+                      <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                        <img
+                          src={
+                            request?.store?.profilePicture ||
+                            "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                          }
+                          alt="store_image"
+                          className="w-[38px] h-[38px] rounded-full"
+                        />
+                      </span>
+                      <span className="text-[13px] font-normal">
+                        {request?.store?.name || "N/A"}
+                      </span>
+                    </span>
+                  ) : request?.product ? (
+                    <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
+                      <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                        <img
+                          src={
+                            request?.product?.cover ||
+                            "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                          }
+                          alt="store_image"
+                          className="w-[38px] h-[38px] rounded-full"
+                        />
+                      </span>
+                      <span className="text-[13px] font-normal">
+                        {request?.product?.name || "N/A"}
+                      </span>
+                    </span>
+                  ) : request?.booking ? (
+                    <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
+                      <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                        <img
+                          src={
+                            request?.booking?.product?.cover ||
+                            "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                          }
+                          alt="store_image"
+                          className="w-[38px] h-[38px] rounded-full"
+                        />
+                      </span>
+                      <span className="text-[13px] font-normal">
+                        {request?.booking?.shortCode || "N/A"}
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
+                      <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                        <img
+                          src={
+                            request?.review?.user?.profilePicture ||
+                            "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                          }
+                          alt="store_image"
+                          className="w-[38px] h-[38px] rounded-full"
+                        />
+                      </span>
+                      <span className="text-[13px] font-normal">
+                        {request?.review?.user?.name || "N/A"}
+                      </span>
+                    </span>
+                  )}
 
                   <span className="w-full col-span-1 flex items-center justify-end h-full  px-6">
                     <span className="text-[20px] font-normal">

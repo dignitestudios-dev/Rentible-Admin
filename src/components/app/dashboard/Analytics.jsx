@@ -23,7 +23,7 @@ const Analytics = () => {
   const getAnalytics = async (query = "") => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`/booking/dashboard`);
+      const { data } = await axios.get(`/admin/dashboard`);
       setAnalytics(data?.data);
       false;
     } catch (error) {
@@ -34,7 +34,7 @@ const Analytics = () => {
     }
   };
   useEffect(() => {
-    // getAnalytics();
+    getAnalytics();
   }, []);
 
   return (
@@ -105,32 +105,32 @@ const Analytics = () => {
           </div>
         </div>
       </div>
-      <div className="w-full h-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 justify-start items-start gap-4">
+      <div className="w-full h-auto grid grid-cols-1  lg:grid-cols-3 justify-start items-start gap-4">
         <div className="w-full h-[161px] rounded-[14px] relative bg-white shadow-md grid grid-cols-5 p-4">
           <div className="w-full col-span-5 flex flex-col justify-between items-start ">
             <span className="text-[16px] font-normal leading-[24px] text-[#959393]">
               Total Users
             </span>
             <h1 className="font-bold text-[27px] leading-[42px] text-black">
-              {analytics?.totalCustomers || 0}
+              {analytics?.totalUsers?.overall || 0}
             </h1>
 
             <div className="w-auto flex justify-start items-center gap-1">
-              {analytics?.changes?.totalCustomers?.change == "positive" ? (
+              {analytics?.totalUsers?.change?.change == "positive" ? (
                 <span className="w-auto flex justify-start items-center gap-[5px]  ">
                   <HiOutlineArrowTrendingUp className="text-black text-xl" />
                   <span className="text-black text-xs">
-                    {analytics?.changes?.totalCustomers?.percent}%
+                    {analytics?.totalUsers?.change?.percent}%
                   </span>
                   <span className="text-xs text-[#606060]">
                     Up from yesterday
                   </span>
                 </span>
-              ) : analytics?.changes?.totalCustomers?.change == "negative" ? (
+              ) : analytics?.totalUsers?.change?.change == "negative" ? (
                 <span className="w-auto flex justify-start items-center gap-[5px]  ">
                   <HiOutlineArrowTrendingDown className="text-red-500 text-xl" />
                   <span className="text-red-500 text-xs">
-                    {analytics?.changes?.totalCustomers?.percent}%
+                    {analytics?.totalUsers?.change?.percent}%
                   </span>
                   <span className="text-xs text-[#606060]">
                     Down from yesterday
@@ -160,25 +160,25 @@ const Analytics = () => {
               Total Stores
             </span>
             <h1 className="font-bold text-[27px] leading-[42px] text-black">
-              {analytics?.totalCustomers || 0}
+              {analytics?.totalStores?.overall || 0}
             </h1>
 
             <div className="w-auto flex justify-start items-center gap-1">
-              {analytics?.changes?.totalCustomers?.change == "positive" ? (
+              {analytics?.totalStores?.change?.change == "positive" ? (
                 <span className="w-auto flex justify-start items-center gap-[5px]  ">
                   <HiOutlineArrowTrendingUp className="text-black text-xl" />
                   <span className="text-black text-xs">
-                    {analytics?.changes?.totalCustomers?.percent}%
+                    {analytics?.totalStores?.change?.percent}%
                   </span>
                   <span className="text-xs text-[#606060]">
                     Up from yesterday
                   </span>
                 </span>
-              ) : analytics?.changes?.totalCustomers?.change == "negative" ? (
+              ) : analytics?.totalStores?.change?.change == "negative" ? (
                 <span className="w-auto flex justify-start items-center gap-[5px]  ">
                   <HiOutlineArrowTrendingDown className="text-red-500 text-xl" />
                   <span className="text-red-500 text-xs">
-                    {analytics?.changes?.totalCustomers?.percent}%
+                    {analytics?.totalStores?.change?.change}%
                   </span>
                   <span className="text-xs text-[#606060]">
                     Down from yesterday
@@ -202,7 +202,7 @@ const Analytics = () => {
             />
           </div>
         </div>{" "}
-        <div className="w-full h-[161px] rounded-[14px] relative bg-white shadow-md grid grid-cols-5 p-4">
+        {/* <div className="w-full h-[161px] rounded-[14px] relative bg-white shadow-md grid grid-cols-5 p-4">
           <div className="w-full col-span-5 flex flex-col justify-between items-start ">
             <span className="text-[16px] font-normal leading-[24px] text-[#959393]">
               Total Products
@@ -212,7 +212,7 @@ const Analytics = () => {
             </h1>
 
             <div className="w-auto flex justify-start items-center gap-1">
-              {analytics?.changes?.totalCustomers?.change == "positive" ? (
+              {analytics?.totalUsers?.change?.change == "positive" ? (
                 <span className="w-auto flex justify-start items-center gap-[5px]  ">
                   <HiOutlineArrowTrendingUp className="text-black text-xl" />
                   <span className="text-black text-xs">
@@ -222,7 +222,7 @@ const Analytics = () => {
                     Up from yesterday
                   </span>
                 </span>
-              ) : analytics?.changes?.totalCustomers?.change == "negative" ? (
+              ) : analytics?.totalUsers?.change?.change == "negative" ? (
                 <span className="w-auto flex justify-start items-center gap-[5px]  ">
                   <HiOutlineArrowTrendingDown className="text-red-500 text-xl" />
                   <span className="text-red-500 text-xs">
@@ -249,32 +249,32 @@ const Analytics = () => {
               className="w-[60px] h-[60px] "
             />
           </div>
-        </div>
+        </div> */}
         <div className="w-full h-[161px] rounded-[14px] relative bg-white shadow-md grid grid-cols-5 p-4">
           <div className="w-full col-span-5 flex flex-col justify-between items-start ">
             <span className="text-[16px] font-normal leading-[24px] text-[#959393]">
               Total Sales Revenue
             </span>
             <h1 className="font-bold text-[27px] leading-[42px] text-black">
-              {analytics?.totalCustomers || 0}
+              ${analytics?.totalSales?.overall || 0}
             </h1>
 
             <div className="w-auto flex justify-start items-center gap-1">
-              {analytics?.changes?.totalCustomers?.change == "positive" ? (
+              {analytics?.totalSales?.change?.change == "positive" ? (
                 <span className="w-auto flex justify-start items-center gap-[5px]  ">
                   <HiOutlineArrowTrendingUp className="text-black text-xl" />
                   <span className="text-black text-xs">
-                    {analytics?.changes?.totalCustomers?.percent}%
+                    {analytics?.totalSales?.change?.percent}%
                   </span>
                   <span className="text-xs text-[#606060]">
                     Up from yesterday
                   </span>
                 </span>
-              ) : analytics?.changes?.totalCustomers?.change == "negative" ? (
+              ) : analytics?.totalSales?.change?.change == "negative" ? (
                 <span className="w-auto flex justify-start items-center gap-[5px]  ">
                   <HiOutlineArrowTrendingDown className="text-red-500 text-xl" />
                   <span className="text-red-500 text-xs">
-                    {analytics?.changes?.totalCustomers?.percent}%
+                    {analytics?.totalSales?.change?.percent}%
                   </span>
                   <span className="text-xs text-[#606060]">
                     Down from yesterday

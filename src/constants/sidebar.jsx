@@ -50,11 +50,11 @@ export const sidebar = [
     sub: [
       {
         title: "User History",
-        url: "/transaction-hisotry/user",
+        url: "/transaction-history/user",
       },
       {
         title: "Store History",
-        url: "/transaction-hisotry/store",
+        url: "/transaction-history/store",
       },
     ],
   },

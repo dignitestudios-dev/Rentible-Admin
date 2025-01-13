@@ -14,6 +14,7 @@ import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import Cookies from "js-cookie";
 import axios from "../../../axios";
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
+import { ErrorToast } from "../../global/Toaster";
 
 // Register necessary components
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
@@ -97,29 +98,38 @@ const DashboardGraph = () => {
     return years;
   };
 
-  const [personData, setPersonData] = useState([]);
-  const [personDataLoading, setPersonDataLoading] = useState(false);
+  const [sales, setSales] = useState([]);
+  const [salesLoading, setSalesLoading] = useState(false);
+
+  const getSales = async () => {
+    try {
+      setSalesLoading(true);
+      const response = await axios.get(
+        selectedMonth == "Select Month"
+          ? `/admin/dashboard/graph?year=${selectedYear}`
+          : `/admin/dashboard/graph?year=${selectedYear}&month=${selectedMonth?.number}`
+      );
+      if (response) {
+        setSales(response?.data?.data);
+      }
+    } catch (error) {
+      ErrorToast(error?.response?.data?.message || "Something went wrong.");
+    } finally {
+      setSalesLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setPersonData({
-      counts: [
-        0, 3, 0, 3, 0, 3, 4, 1, 0, 0, 0, 2, 3, 1, 4, 5, 0, 5, 1, 2, 0, 5, 2, 1,
-        3, 3, 1, 2, 6, 5,
-      ],
-      result: [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-      ],
-    });
-  }, [selectedYear, selectedMonth]);
+    getSales();
+  }, [selectedMonth, selectedYear]);
 
   // Sample data
   const data = {
-    labels: personData?.result, // This will be your months
+    labels: sales?.labels, // This will be your months
     datasets: [
       {
         label: "Total Revenue", // Dataset label
-        data: personData?.counts, // Subscription counts
+        data: sales?.sales, // Subscription counts
         backgroundColor: "#F85E00", // Bar color
         borderColor: "#ffffff", // Border color
         borderWidth: 1,
@@ -130,7 +140,7 @@ const DashboardGraph = () => {
   };
   return (
     <div className="bg-white p-6 shadow-lg rounded-[20px] flex flex-col gap-y-6">
-      <div className="w-full flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="w-full flex flex-col lg:flex-row lg:items-center border-b border-gray-200 pb-2 justify-between gap-4">
         <h1 className="text-[16px] leading-[24px] text-[#121516] font-semibold">
           Sales Overview
         </h1>
@@ -224,7 +234,7 @@ const DashboardGraph = () => {
 
       <div className="w-full flex flex-col justify-start items-start gap-2 col-span-3 h-full p-4">
         <div className="h-full w-full flex justify-center items-center">
-          {personDataLoading ? (
+          {salesLoading ? (
             <div className="w-full h-[400px] bg-gray-100 rounded-lg animate-pulse"></div>
           ) : (
             <Bar data={data} options={options} />

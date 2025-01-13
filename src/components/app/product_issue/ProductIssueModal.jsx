@@ -84,39 +84,80 @@ const ProductIssueModal = ({ isOpen, onRequestClose, issue }) => {
               Posted By
             </span>
             <div className="w-full h-full flex justify-between items-center gap-2">
-              <div className="w-auto flex justify-start items-center gap-2">
-                <span className="w-[35px] h-[35px] border border-[#F85E00] rounded-full flex items-center justify-center ">
-                  <img
-                    src={
-                      issue?.reportedBy?.profilePicture ||
-                      "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
-                    }
-                    alt="store_image"
-                    className="w-[27px] h-[27px] rounded-full"
-                  />
-                </span>
-                <div className="w-auto flex flex-col justify-start items-start">
-                  <h3 className="text-[16px] font-normal text-black leading-[20.1px]">
-                    {issue?.reportedBy?.name || "N/A"}
-                  </h3>
-                </div>
-              </div>
+              {issue?.reportedByUser ? (
+                <>
+                  <div className="w-auto flex justify-start items-center gap-2">
+                    <span className="w-[35px] h-[35px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                      <img
+                        src={
+                          issue?.reportedByUser?.profilePicture ||
+                          "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                        }
+                        alt="store_image"
+                        className="w-[27px] h-[27px] rounded-full"
+                      />
+                    </span>
+                    <div className="w-auto flex flex-col justify-start items-start">
+                      <h3 className="text-[16px] font-normal text-black leading-[20.1px]">
+                        {issue?.reportedByUser?.name || "N/A"}
+                      </h3>
+                    </div>
+                  </div>
 
-              {issue?.reportedBy?.chatId && (
-                <button
-                  onClick={() => {
-                    navigate("/messages");
-                    localStorage.setItem("activeLink", "Messages");
-                    setUid(issue?.reportedBy?.chatId);
-                  }}
-                  className="w-[31px] h-[31px] flex items-center justify-center"
-                >
-                  <img
-                    src="/chat-icon.png"
-                    alt="Chat Icon"
-                    className="w-full h-full"
-                  />
-                </button>
+                  {issue?.reportedByUser?.chatId && (
+                    <button
+                      onClick={() => {
+                        navigate("/messages");
+                        localStorage.setItem("activeLink", "Messages");
+                        setUid(issue?.reportedByUser?.chatId);
+                      }}
+                      className="w-[31px] h-[31px] flex items-center justify-center"
+                    >
+                      <img
+                        src="/chat-icon.png"
+                        alt="Chat Icon"
+                        className="w-full h-full"
+                      />
+                    </button>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="w-auto flex justify-start items-center gap-2">
+                    <span className="w-[35px] h-[35px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                      <img
+                        src={
+                          issue?.reportedByStore?.profilePicture ||
+                          "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                        }
+                        alt="store_image"
+                        className="w-[27px] h-[27px] rounded-full"
+                      />
+                    </span>
+                    <div className="w-auto flex flex-col justify-start items-start">
+                      <h3 className="text-[16px] font-normal text-black leading-[20.1px]">
+                        {issue?.reportedByStore?.name || "N/A"}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {issue?.reportedByStore?.chatId && (
+                    <button
+                      onClick={() => {
+                        navigate("/messages");
+                        localStorage.setItem("activeLink", "Messages");
+                        setUid(issue?.reportedByStore?.chatId);
+                      }}
+                      className="w-[31px] h-[31px] flex items-center justify-center"
+                    >
+                      <img
+                        src="/chat-icon.png"
+                        alt="Chat Icon"
+                        className="w-full h-full"
+                      />
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>

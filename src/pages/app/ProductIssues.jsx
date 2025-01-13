@@ -261,21 +261,40 @@ const ProductIssues = () => {
                     </span>
                   </span>
 
-                  <span className="w-full col-span-2 flex items-center gap-2 justify-start h-full ">
-                    <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
-                      <img
-                        src={
-                          issue?.reportedBy?.profilePicture ||
-                          "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
-                        }
-                        alt="store_image"
-                        className="w-[38px] h-[38px] rounded-full"
-                      />
+                  {issue?.reportedByUser ? (
+                    <span className="w-full col-span-2 flex items-center gap-2 justify-start h-full ">
+                      <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                        <img
+                          src={
+                            issue?.reportedByUser?.profilePicture ||
+                            "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                          }
+                          alt="store_image"
+                          className="w-[38px] h-[38px] rounded-full"
+                        />
+                      </span>
+                      <span className="text-[13px] font-normal">
+                        {issue?.reportedByUser?.name || "N/A"}
+                      </span>
                     </span>
-                    <span className="text-[13px] font-normal">
-                      {issue?.reportedBy?.name || "N/A"}
+                  ) : (
+                    <span className="w-full col-span-2 flex items-center gap-2 justify-start h-full ">
+                      <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+                        <img
+                          src={
+                            issue?.reportedByStore?.profilePicture ||
+                            "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                          }
+                          alt="store_image"
+                          className="w-[38px] h-[38px] rounded-full"
+                        />
+                      </span>
+                      <span className="text-[13px] font-normal">
+                        {issue?.reportedByStore?.name || "N/A"}
+                      </span>
                     </span>
-                  </span>
+                  )}
+
                   <span className="w-full col-span-4 flex flex-col items-start justify-center h-full ">
                     <span className="text-[13px] mr-2 font-normal">
                       {issue?.title || "N/A"}

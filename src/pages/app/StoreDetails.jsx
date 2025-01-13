@@ -22,6 +22,7 @@ import CustomerReported from "../../components/app/customers/CustomerReported";
 import CustomerApproveModal from "../../components/app/customers/CustomerApproveModal";
 import CustomerApproved from "../../components/app/customers/CustomerApproved";
 import StoreProducts from "../../components/app/store/StoreProducts";
+import StoreImageModal from "../../components/app/store/StoreImageModal";
 
 const StoreDetails = () => {
   const navigate = useNavigate();
@@ -195,6 +196,12 @@ const StoreDetails = () => {
     getStoreDetail();
   }, []);
 
+  const [imageOpen, setImageOpen] = useState({
+    open: false,
+    url: null,
+    type: "front",
+  });
+
   return user !== null ? (
     <div className="w-full h-full  flex flex-col gap-6  py-4 px-2 lg:px-6 justify-start items-start ">
       <div className="w-full h-auto flex flex-col gap-3 justify-start items-start">
@@ -355,6 +362,139 @@ const StoreDetails = () => {
               <span className="text-[14px] font-normal text-[#818181] leading-[23px]">
                 {profile?.address || "N/A"}
               </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full   flex flex-col  py-4  justify-start items-start gap-6">
+        <div className="w-full h-auto flex flex-col gap-3 justify-start items-start">
+          <div className="w-full relative flex flex-col lg:flex-row justify-between lg:items-center">
+            <span className="text-[26px] md:text-[28px] lg:text-[32px] font-bold leading-[48px] text-[#202224]">
+              Identity Details
+            </span>
+          </div>
+          <div className="w-full h-[426px] rounded-[14px] bg-white grid grid-cols-2 grid-rows-2  ">
+            <div className="w-full flex flex-col  border-r border-gray-300 items-start justify-center gap-2 p-6">
+              <span className="text-[20px] font-medium leading-[30px] text-black">
+                Front ID Card
+              </span>
+              <div className="w-full h-[108px] rounded-[12px] border border-dashed border-gray-300 bg-gray-100 flex items-center justify-between px-4">
+                <img
+                  src={profile?.idFrontImage}
+                  alt=""
+                  className="w-[80px] h-[80px] rounded-md"
+                />
+
+                <div className="w-auto flex items-center justify-start gap-2">
+                  <button
+                    onClick={() =>
+                      setImageOpen({
+                        open: true,
+                        type: "front",
+                        url: profile?.idFrontImage,
+                      })
+                    }
+                    className="h-[47.59px] rounded-lg bg-orange-500 text-white text-md px-3"
+                  >
+                    View Full Image
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="w-full flex flex-col  border-gray-300 items-start justify-center gap-2 p-6">
+              <span className="text-[20px] font-medium leading-[30px] text-black">
+                Back ID Card
+              </span>
+              <div className="w-full h-[108px] rounded-[12px] border border-dashed border-gray-300 bg-gray-100 flex items-center justify-between px-4">
+                <img
+                  src={profile?.idBackImage}
+                  alt=""
+                  className="w-[80px] h-[80px] rounded-md"
+                />
+
+                <div className="w-auto flex items-center justify-start gap-2">
+                  <button
+                    onClick={() =>
+                      setImageOpen({
+                        open: true,
+                        type: "back",
+                        url: profile?.idBackImage,
+                      })
+                    }
+                    className="h-[47.59px] rounded-lg bg-orange-500 text-white text-md px-3"
+                  >
+                    View Full Image
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <StoreImageModal
+              isOpen={imageOpen?.open}
+              onRequestClose={() =>
+                setImageOpen({
+                  open: false,
+                  type: "front",
+                  url: null,
+                })
+              }
+              url={imageOpen?.url}
+              type={imageOpen?.type}
+            />
+            <div className="w-full flex flex-col items-start border-t border-r border-gray-300 justify-center gap-2 p-6">
+              <span className="text-[20px] font-medium leading-[30px] text-black">
+                Front ID Card
+              </span>
+              <div className="w-full h-[108px] rounded-[12px] border border-dashed border-gray-300 bg-gray-100 flex items-center justify-between px-4">
+                <img
+                  src={profile?.proofOfAddress}
+                  alt=""
+                  className="w-[80px] h-[80px] rounded-md"
+                />
+
+                <div className="w-auto flex items-center justify-start gap-2">
+                  <button
+                    onClick={() =>
+                      setImageOpen({
+                        open: true,
+                        type: "proof",
+                        url: profile?.proofOfAddress,
+                      })
+                    }
+                    className="h-[47.59px] rounded-lg bg-orange-500 text-white text-md px-3"
+                  >
+                    View Full Image
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="w-full flex flex-col items-start border-t border-gray-300 justify-center gap-2 p-6">
+              <span className="text-[20px] font-medium leading-[30px] text-black">
+                Ownership Certificate
+              </span>
+              <div className="w-full h-[108px] rounded-[12px] border border-dashed border-gray-300 bg-gray-100 flex items-center justify-between px-4">
+                <img
+                  src={profile?.ownershipCertificate}
+                  alt=""
+                  className="w-[80px] h-[80px] rounded-md"
+                />
+
+                <div className="w-auto flex items-center justify-start gap-2">
+                  <button
+                    onClick={() =>
+                      setImageOpen({
+                        open: true,
+                        type: "ownership",
+                        url: profile?.ownershipCertificate,
+                      })
+                    }
+                    className="h-[47.59px] rounded-lg bg-orange-500 text-white text-md px-3"
+                  >
+                    View Full Image
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

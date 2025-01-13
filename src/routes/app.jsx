@@ -14,6 +14,9 @@ import UserDetails from "../pages/app/UserDetails";
 import Stores from "../pages/app/Stores";
 import StoreDetails from "../pages/app/StoreDetails";
 import Reports from "../pages/app/Reports";
+import UserTransactions from "../pages/app/UserTransactions";
+import StoreTransactions from "../pages/app/StoreTransactions";
+import Categories from "../pages/app/Categories";
 
 export const app = [
   {
@@ -60,6 +63,21 @@ export const app = [
     title: "Product Detail",
     url: "/products/:id",
     page: <AppLayout page={<ProductDetails />} />,
+  },
+  {
+    title: "Categories",
+    url: "/categories",
+    page: <AppLayout page={<Categories />} />,
+  },
+  {
+    title: "User Transaction History",
+    url: "/transaction-history/user",
+    page: <AppLayout page={<UserTransactions />} />,
+  },
+  {
+    title: "Store Transaction History",
+    url: "/transaction-history/store",
+    page: <AppLayout page={<StoreTransactions />} />,
   },
   // {
   //   title: "Orders",

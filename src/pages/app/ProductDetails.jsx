@@ -211,6 +211,27 @@ const ProductDetails = () => {
               Product Details
             </span>
           </div>
+          <div className="w-auto flex justify-start items-center gap-2">
+            <div className="w-auto flex flex-col text-right justify-start items-end">
+              <span className="text-[20px] font-medium leading-[30px]">
+                {product?.user?.name}
+              </span>
+              <span className="text-[14px] font-normal leading-[21px] text-[#B0B0B0]">
+                {product?.user?.email}
+              </span>
+            </div>
+            <span className="w-[59px] h-[59px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+              <img
+                src={
+                  product?.user?.profilePicture ||
+                  "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                }
+                alt="store_image"
+                className="w-[54px] h-[54px] rounded-full"
+              />
+            </span>
+            <div></div>
+          </div>
         </div>
       </div>
 

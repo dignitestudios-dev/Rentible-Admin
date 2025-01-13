@@ -754,7 +754,7 @@ const Messages = () => {
             </div>
           </div>
 
-          <div className="w-full h-[calc(100%-110px)]  flex flex-col overflow-y-auto justify-start items-start ">
+          <div className="w-full h-[calc(100%-110px)]  grid grid-cols-1  overflow-y-auto justify-start items-start ">
             {chatLoading ? (
               [1, 2, 4, 5, 6, 7]?.map((user) => {
                 return (
