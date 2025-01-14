@@ -1,11 +1,38 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Modal from "react-modal";
 import { IoMdClose } from "react-icons/io";
 import { FaExclamation } from "react-icons/fa";
 import { formatDateToMMDDYYYY } from "../../../utils/helper";
+import { ErrorToast } from "../../global/Toaster";
+import axios from "../../../axios";
+import { AppContext } from "../../../context/AppContext";
+import { useNavigate } from "react-router-dom";
+import { FiLoader } from "react-icons/fi";
 
 const ProductRequestModal = ({ isOpen, onRequestClose, request }) => {
   const [active, setActive] = useState(false);
+  const { setUid, setSender } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const createUserChatRoom = async (userId = null, user) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.post(`/admin/createChat`, {
+        userId: userId,
+      });
+      if (data?.success) {
+        setSender(user);
+        setUid(data?.data);
+        localStorage.setItem("activeLink", "Messages");
+        navigate("/messages");
+      }
+    } catch (error) {
+      ErrorToast(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Modal
@@ -45,22 +72,25 @@ const ProductRequestModal = ({ isOpen, onRequestClose, request }) => {
                     </div>
                   </div>
 
-                  {request?.reportedByUser?.chatId && (
-                    <button
-                      onClick={() => {
-                        navigate("/messages");
-                        localStorage.setItem("activeLink", "Messages");
-                        setUid(request?.reportedByUser?.chatId);
-                      }}
-                      className="w-[31px] h-[31px] flex items-center justify-center"
-                    >
+                  <button
+                    onClick={() => {
+                      createUserChatRoom(
+                        request?.reportedByUser?._id,
+                        request?.reportedByUser
+                      );
+                    }}
+                    className="w-[31px] h-[31px] rounded-md  bg-orange-500 flex items-center justify-center"
+                  >
+                    {loading ? (
+                      <FiLoader className="text-lg text-white animate-spin" />
+                    ) : (
                       <img
                         src="/chat-icon.png"
                         alt="Chat Icon"
                         className="w-full h-full"
                       />
-                    </button>
-                  )}
+                    )}
+                  </button>
                 </>
               ) : (
                 <>
@@ -81,23 +111,6 @@ const ProductRequestModal = ({ isOpen, onRequestClose, request }) => {
                       </h3>
                     </div>
                   </div>
-
-                  {request?.reportedByStore?.chatId && (
-                    <button
-                      onClick={() => {
-                        navigate("/messages");
-                        localStorage.setItem("activeLink", "Messages");
-                        setUid(request?.reportedByStore?.chatId);
-                      }}
-                      className="w-[31px] h-[31px] flex items-center justify-center"
-                    >
-                      <img
-                        src="/chat-icon.png"
-                        alt="Chat Icon"
-                        className="w-full h-full"
-                      />
-                    </button>
-                  )}
                 </>
               )}
             </div>
@@ -170,6 +183,22 @@ const ProductRequestModal = ({ isOpen, onRequestClose, request }) => {
                     {request?.user?.name || "N/A"}
                   </h3>
                 </div>
+                <button
+                  onClick={() => {
+                    createUserChatRoom(request?.user?._id, request?.user);
+                  }}
+                  className="w-[31px] h-[31px] flex items-center justify-center"
+                >
+                  {loading ? (
+                    <FiLoader className="text-lg text-white animate-spin" />
+                  ) : (
+                    <img
+                      src="/chat-icon.png"
+                      alt="Chat Icon"
+                      className="w-full h-full"
+                    />
+                  )}
+                </button>
               </div>
             ) : request?.store ? (
               <div className="w-auto flex justify-start items-center gap-2">
@@ -245,7 +274,7 @@ const ProductRequestModal = ({ isOpen, onRequestClose, request }) => {
               </div>
             )}
           </div>
-          <div className="w-[45%] h-full flex flex-col gap-1 justify-start items-end">
+          {/* <div className="w-[45%] h-full flex flex-col gap-1 justify-start items-end">
             <span className="text-[12px] font-normal leading-[20px] text-[#000]">
               Disable
             </span>
@@ -264,7 +293,7 @@ const ProductRequestModal = ({ isOpen, onRequestClose, request }) => {
             >
               <span className="w-[15.7px] h-[15.7px] rounded-full bg-white shadow "></span>
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </Modal>

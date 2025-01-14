@@ -11,24 +11,13 @@ import { formatDateToMMDDYYYY } from "../../utils/helper";
 import AddCategoryModal from "../../components/app/categories/AddCategoryModal";
 import AddSubCategoryModal from "../../components/app/categories/AddSubCategoryModal";
 import EditCategoryModal from "../../components/app/categories/EditCategoryModal";
+import DeleteCategoryConfirm from "../../components/app/categories/DeleteCategoryConfirm";
+import DeleteSubCategoryConfirm from "../../components/app/categories/DeleteSubCategoryConfirm";
+import EditSubCategoryModal from "../../components/app/categories/EditSubCategoryModal";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]); // Updated variable name to camelCase
   const [subCategories, setSubCategories] = useState([]); // Updated variable name to camelCase
-
-  const [pagination, setPagination] = useState({
-    itemsPerPage: 0,
-    currentPage: 0,
-    totalItems: 0,
-    totalPages: 0,
-  }); // Updated variable name to camelCase
-
-  const [paginationSub, setPaginationSub] = useState({
-    itemsPerPage: 0,
-    currentPage: 0,
-    totalItems: 0,
-    totalPages: 0,
-  });
 
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [subCategoryLoading, setSubCategoryLoading] = useState(false);
@@ -36,16 +25,11 @@ const Categories = () => {
   const [update, setUpdate] = useState(false);
   const [updateSub, setUpdateSub] = useState(false);
 
-  //   const store = JSON.parse(Cookies.get("store"));
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentPageSub, setCurrentPageSub] = useState(1);
-
   const getCategories = async (query = "") => {
     try {
       setCategoryLoading(true);
-      const { data } = await axios.get(`/category?page=${currentPage}&limit=5`);
+      const { data } = await axios.get(`/category`);
       setCategories(data?.data); // Store the actual data from the response
-      setPagination(data?.pagination);
     } catch (error) {
       ErrorToast(error?.response?.data?.message || "Something went wrong.");
       console.log("Error:", error);
@@ -57,11 +41,8 @@ const Categories = () => {
   const getSubCategories = async (query = "") => {
     try {
       setSubCategoryLoading(true);
-      const { data } = await axios.get(
-        `/category/sub?page=${currentPageSub}&limit=5`
-      );
+      const { data } = await axios.get(`/category/sub`);
       setSubCategories(data?.data); // Store the actual data from the response
-      setPaginationSub(data?.pagination);
     } catch (error) {
       ErrorToast(error?.response?.data?.message || "Something went wrong.");
       console.log("Error:", error);
@@ -69,20 +50,34 @@ const Categories = () => {
       setSubCategoryLoading(false);
     }
   };
-  //
 
   useEffect(() => {
     getCategories();
-  }, [update, currentPage]);
+  }, [update]);
 
   useEffect(() => {
     getSubCategories();
-  }, [updateSub, currentPageSub]);
+  }, [updateSub]);
 
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [deleteCategoryOpen, setDeleteCategoryOpen] = useState(false);
   const [isSubCategoryOpen, setIsSubCategoryOpen] = useState(false);
+  const [deleteSubCategoryOpen, setDeleteSubCategoryOpen] = useState(false);
   const [isUpdateCategoryOpen, setIsUpdateCategoryOpen] = useState(false);
+  const [isUpdateSubCategoryOpen, setIsUpdateSubCategoryOpen] = useState(false);
+
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+
+  const [deleteCategory, setDeleteCategory] = useState(null);
+
+  useEffect(() => {
+    selectedCategory && setIsUpdateCategoryOpen(true);
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    selectedSubCategory && setIsUpdateSubCategoryOpen(true);
+  }, [selectedSubCategory]);
 
   return (
     <div className="w-full grid grid-cols-2 gap-4  py-4 px-6 justify-start items-start">
@@ -106,6 +101,20 @@ const Categories = () => {
           isOpen={isCategoryOpen}
           onRequestClose={() => setIsCategoryOpen(false)}
           setUpdate={setUpdate}
+        />
+
+        <DeleteCategoryConfirm
+          isOpen={deleteCategoryOpen}
+          onRequestClose={() => setDeleteCategoryOpen(false)}
+          setUpdate={setUpdate}
+          category={deleteCategory}
+        />
+
+        <DeleteSubCategoryConfirm
+          isOpen={deleteSubCategoryOpen}
+          onRequestClose={() => setDeleteSubCategoryOpen(false)}
+          setUpdate={setUpdate}
+          category={deleteCategory}
         />
 
         <div className="w-full flex flex-col justify-start items-start">
@@ -154,12 +163,16 @@ const Categories = () => {
                       <button
                         onClick={() => {
                           setSelectedCategory(category);
-                          setIsUpdateCategoryOpen(true);
                         }}
                       >
                         <img src="/edit_btn.png" alt="" className="w-[25px]" />
                       </button>
-                      <button>
+                      <button
+                        onClick={() => {
+                          setDeleteCategory(category);
+                          setDeleteCategoryOpen(true);
+                        }}
+                      >
                         <img
                           src="/delete_btn.png"
                           alt=""
@@ -176,57 +189,6 @@ const Categories = () => {
               </div>
             )}
           </div>
-
-          {!categoryLoading && categories?.length > 0 && (
-            <div className="w-full my-6  px-3 h-[61px] rounded-full bg-white flex justify-between items-center">
-              <span className="text-[16px] font-normal text-black">
-                You have {pagination?.currentPage} of {pagination?.totalPages}{" "}
-                Pages
-              </span>
-
-              <div className="w-auto flex items-center  justify-start   gap-2 ">
-                <button
-                  disabled={currentPage == 1}
-                  onClick={() =>
-                    setCurrentPage((prev) => (prev !== 1 ? prev - 1 : prev))
-                  }
-                  className="w-[43px] h-[43px] rounded-full bg-gray-200 flex items-center justify-center text-3xl text-[#000] disabled:text-[#909090]"
-                >
-                  <RxCaretLeft />
-                </button>
-
-                <div className="w-auto flex justify-center items-center h-[43px] rounded-full px-2  bg-gray-200">
-                  {Array.from(
-                    { length: pagination?.totalPages },
-                    (_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentPage(index + 1)}
-                        className={`w-[33px] h-[33px]  ${
-                          currentPage == index + 1
-                            ? "bg-[#F85E00] text-white"
-                            : "bg-transparent text-[#909090]"
-                        } hover:bg-[#F85E00]/[0.4] hover:text-[#000]/[0.8] flex items-center rounded-full justify-center`}
-                      >
-                        {index + 1}
-                      </button>
-                    )
-                  )}
-                </div>
-                <button
-                  disabled={currentPage == pagination?.totalPages}
-                  onClick={() =>
-                    setCurrentPage((prev) =>
-                      prev !== pagination?.totalPages ? prev + 1 : prev
-                    )
-                  }
-                  className="w-[43px] h-[43px] rounded-full bg-gray-200 flex items-center justify-center text-3xl text-[#000] disabled:text-[#909090]"
-                >
-                  <RxCaretRight />
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         <EditCategoryModal
@@ -257,6 +219,14 @@ const Categories = () => {
           onRequestClose={() => setIsSubCategoryOpen(false)}
           setUpdate={setUpdate}
           categories={categories || []}
+        />
+
+        <EditSubCategoryModal
+          isOpen={isUpdateSubCategoryOpen}
+          onRequestClose={() => setIsUpdateSubCategoryOpen(false)}
+          setUpdate={setUpdate}
+          categories={categories || []}
+          category={selectedSubCategory}
         />
 
         <div className="w-full flex flex-col justify-start items-start">
@@ -302,10 +272,19 @@ const Categories = () => {
                     </span>
 
                     <span className="w-full col-span-1 flex items-center justify-end gap-2 h-full  px-6">
-                      <button>
+                      <button
+                        onClick={() => {
+                          setSelectedSubCategory(sub);
+                        }}
+                      >
                         <img src="/edit_btn.png" alt="" className="w-[25px]" />
                       </button>
-                      <button>
+                      <button
+                        onClick={() => {
+                          setDeleteCategory(sub);
+                          setDeleteSubCategoryOpen(true);
+                        }}
+                      >
                         <img
                           src="/delete_btn.png"
                           alt=""
@@ -322,57 +301,6 @@ const Categories = () => {
               </div>
             )}
           </div>
-
-          {!subCategoryLoading && subCategories?.length > 0 && (
-            <div className="w-full my-6  px-3 h-[61px] rounded-full bg-white flex justify-between items-center">
-              <span className="text-[16px] font-normal text-black">
-                You have {paginationSub?.currentPage} of{" "}
-                {paginationSub?.totalPages} Pages
-              </span>
-
-              <div className="w-auto flex items-center  justify-start   gap-2 ">
-                <button
-                  disabled={currentPageSub == 1}
-                  onClick={() =>
-                    setCurrentPageSub((prev) => (prev !== 1 ? prev - 1 : prev))
-                  }
-                  className="w-[43px] h-[43px] rounded-full bg-gray-200 flex items-center justify-center text-3xl text-[#000] disabled:text-[#909090]"
-                >
-                  <RxCaretLeft />
-                </button>
-
-                <div className="w-auto flex justify-center items-center h-[43px] rounded-full px-2  bg-gray-200">
-                  {Array.from(
-                    { length: paginationSub?.totalPages },
-                    (_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentPageSub(index + 1)}
-                        className={`w-[33px] h-[33px]  ${
-                          currentPageSub == index + 1
-                            ? "bg-[#F85E00] text-white"
-                            : "bg-transparent text-[#909090]"
-                        } hover:bg-[#F85E00]/[0.4] hover:text-[#000]/[0.8] flex items-center rounded-full justify-center`}
-                      >
-                        {index + 1}
-                      </button>
-                    )
-                  )}
-                </div>
-                <button
-                  disabled={currentPageSub == paginationSub?.totalPages}
-                  onClick={() =>
-                    setCurrentPageSub((prev) =>
-                      prev !== paginationSub?.totalPages ? prev + 1 : prev
-                    )
-                  }
-                  className="w-[43px] h-[43px] rounded-full bg-gray-200 flex items-center justify-center text-3xl text-[#000] disabled:text-[#909090]"
-                >
-                  <RxCaretRight />
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

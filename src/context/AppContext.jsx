@@ -65,6 +65,7 @@ export const AppContextProvider = ({ children }) => {
 
   // Chat related states:
   const [uid, setUid] = useState(null);
+  const [sender, setSender] = useState(null);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -88,6 +89,8 @@ export const AppContextProvider = ({ children }) => {
         notifications,
         sidebarOpen,
         setSidebarOpen,
+        sender,
+        setSender,
       }}
     >
       {children}

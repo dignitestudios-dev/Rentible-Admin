@@ -3,12 +3,18 @@ import Modal from "react-modal";
 import { IoMdClose } from "react-icons/io";
 import { FaExclamation } from "react-icons/fa";
 import { formatDateToMMDDYYYY } from "../../../utils/helper";
-import axios from "../../../axios";
 import { ErrorToast, SuccessToast } from "../../global/Toaster";
+import axios from "../../../axios";
 import { FiLoader } from "react-icons/fi";
-
-const EditCategoryModal = ({ isOpen, onRequestClose, setUpdate, category }) => {
+const EditSubCategoryModal = ({
+  isOpen,
+  onRequestClose,
+  setUpdate,
+  categories,
+  category,
+}) => {
   const [name, setName] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -28,20 +34,25 @@ const EditCategoryModal = ({ isOpen, onRequestClose, setUpdate, category }) => {
   const updateCategory = async () => {
     if (name == "") {
       ErrorToast("Name cannot be left empty.");
+    } else if (selectedCategory == null) {
+      ErrorToast("You must select a category.");
     } else {
       try {
         setLoading(true);
         const formdata = new FormData();
         formdata.append("name", name);
-        formdata.append("categoryId", category?._id);
         imageFile && formdata.append("cover", imageFile);
+        formdata.append("parentCategory", selectedCategory);
+        formdata.append("categoryId", category?._id);
+
         const { data } = await axios.put("/category", formdata);
         if (data?.success) {
-          SuccessToast("Category Updated Successfully.");
+          SuccessToast("Sub Category Created Successfully.");
           setUpdate((prev) => !prev);
           onRequestClose();
         }
       } catch (error) {
+        console.log(error);
         ErrorToast(error?.response?.data?.message || "Something went wrong.");
       } finally {
         setLoading(false);
@@ -50,9 +61,9 @@ const EditCategoryModal = ({ isOpen, onRequestClose, setUpdate, category }) => {
   };
 
   useEffect(() => {
-    console.log(category);
     setName(category?.name);
     setImageUrl(category?.cover);
+    setSelectedCategory(category?.parentCategory?._id);
   }, [category]);
 
   return (
@@ -64,7 +75,7 @@ const EditCategoryModal = ({ isOpen, onRequestClose, setUpdate, category }) => {
     >
       <div className="bg-white p-6 rounded-[16px] shadow-lg max-w-lg w-[360px] lg:w-[461px]  items-center flex flex-col gap-2 justify-center ">
         <h2 className=" font-semibold text-black text-center mb-1 leading-[36px] text-[24px]">
-          Edit Category
+          Edit Sub Category
         </h2>
         <button
           onClick={() => document.getElementById("image").click()}
@@ -94,11 +105,30 @@ const EditCategoryModal = ({ isOpen, onRequestClose, setUpdate, category }) => {
 
         <input
           type="text"
-          placeholder="Category Name"
+          placeholder="Sub Category Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-[385px] h-[49px] rounded-[8px] outline-none px-3 bg-gray-100 my-2"
         />
+
+        <select
+          type="text"
+          placeholder="Sub Category Name"
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="w-[385px] h-[49px] rounded-[8px] outline-none px-3 bg-gray-100 my-2"
+        >
+          <option value={""}>Select Category</option>
+          {categories?.map((category) => {
+            return (
+              <option
+                selected={selectedCategory == category?._id}
+                value={category?._id}
+              >
+                {category?.name}
+              </option>
+            );
+          })}
+        </select>
 
         <button
           onClick={updateCategory}
@@ -107,7 +137,7 @@ const EditCategoryModal = ({ isOpen, onRequestClose, setUpdate, category }) => {
           {loading ? (
             <FiLoader className="animate-spin text-lg " />
           ) : (
-            "Update Category"
+            "Update Sub Category"
           )}
         </button>
       </div>
@@ -115,4 +145,4 @@ const EditCategoryModal = ({ isOpen, onRequestClose, setUpdate, category }) => {
   );
 };
 
-export default EditCategoryModal;
+export default EditSubCategoryModal;

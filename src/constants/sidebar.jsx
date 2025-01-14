@@ -78,4 +78,16 @@ export const sidebar = [
     light_icon: "/sidebar/requests_white.png",
     dark_icon: "/sidebar/requests_black.png",
   },
+  {
+    title: "Notifications",
+    url: "/notifications",
+    light_icon: "/sidebar/notification_white.png",
+    dark_icon: "/sidebar/notification_black.png",
+  },
+  {
+    title: "Tickets",
+    url: "/tickets",
+    light_icon: "/sidebar/support_white.png",
+    dark_icon: "/sidebar/support_black.png",
+  },
 ];

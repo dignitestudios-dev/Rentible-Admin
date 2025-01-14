@@ -13,19 +13,19 @@ const AppLayout = ({ page }) => {
   const location = useLocation();
   const { fetchToken, setNotifications } = useContext(AppContext);
 
-  const getNotifications = () => {
-    const token = Cookies.get("token");
-    if (token) {
-      axios
-        .get(`/notification`)
-        .then((response) => {
-          setNotifications(response?.data?.data);
-        })
-        .catch((error) => {
-          ErrorToast(error?.response?.data?.message);
-        });
-    }
-  };
+  // const getNotifications = () => {
+  //   const token = Cookies.get("token");
+  //   if (token) {
+  //     axios
+  //       .get(`/notification`)
+  //       .then((response) => {
+  //         setNotifications(response?.data?.data);
+  //       })
+  //       .catch((error) => {
+  //         ErrorToast(error?.response?.data?.message);
+  //       });
+  //   }
+  // };
   useEffect(() => {
     location?.pathname == "/dashboard" &&
       localStorage.setItem("activeLink", "Dashboard");
@@ -36,7 +36,7 @@ const AppLayout = ({ page }) => {
       navigate("/login");
     }
 
-    getNotifications();
+    // getNotifications();
     fetchToken();
   }, []);
   return (

@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { AppContext } from "../../context/AppContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster.jsx";
+import AddNotificationModal from "../../components/app/notifications/AddNotificationModal.jsx";
 
 // Child Component to Handle Swipe
 const SwipeableNotification = ({ notification, getTimeAgo, setUpdate }) => {
@@ -80,7 +81,7 @@ const Notifications = () => {
       if (token) {
         setDataLoading(true);
         axios
-          .get(`/notification`)
+          .get(`/admin/notifications`)
           .then((response) => {
             setData(response?.data?.data);
             setNotifications(response?.data?.data);
@@ -120,19 +121,26 @@ const Notifications = () => {
     return "just now";
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="w-full h-auto overflow-x-hidden flex justify-center items-center">
       <div className="  w-full  h-full p-6  flex flex-col gap-6">
         <div className="w-full flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-bold">Notifications</h1>
-            <h1 className="text-sm font-medium text-gray-500">
-              Swipe Left to delete the notification & swipe right to mark
-              notification as read.
-            </h1>
           </div>
 
-          <button className="bg-[#F85E00] rounded-[10px] text-[13px] font-semibold text-white py-2.5 w-[118px]">
+          <AddNotificationModal
+            isOpen={isOpen}
+            setUpdate={setUpdate}
+            onRequestClose={() => setIsOpen(false)}
+          />
+
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-[#F85E00] rounded-[10px] text-[13px] font-semibold text-white py-2.5 w-[118px]"
+          >
             + Send New
           </button>
         </div>

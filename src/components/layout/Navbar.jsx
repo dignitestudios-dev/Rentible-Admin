@@ -56,7 +56,7 @@ const Navbar = () => {
         />
       </div>
       <div className="w-auto h-full flex justify-start items-center gap-4">
-        <Link
+        {/* <Link
           to="/notifications"
           className="w-[29px] h-[29px] rounded-lg flex items-center justify-center bg-[#e7e6e6] p-1 relative"
         >
@@ -67,7 +67,7 @@ const Navbar = () => {
               {unreadCount}
             </span>
           )}
-        </Link>
+        </Link> */}
         <div className="w-auto h-full flex justify-start items-center gap-2">
           <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
             <img

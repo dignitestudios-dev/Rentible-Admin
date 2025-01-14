@@ -27,7 +27,7 @@ import { getAuth } from "firebase/auth";
 import { useLocation, useParams } from "react-router-dom";
 
 const Messages = () => {
-  const { uid, setUid } = useContext(AppContext);
+  const { uid, setUid, sender, setSender } = useContext(AppContext);
 
   const { chatId } = useParams();
 
@@ -136,8 +136,6 @@ const Messages = () => {
     // Return the unsubscribe function to clean up the listener
     return unsubscribe;
   };
-
-  const [sender, setSender] = useState(null);
 
   const fetchUserDetails = async (userId) => {
     try {
@@ -783,6 +781,7 @@ const Messages = () => {
                   onClick={() => {
                     setUid(chatUser?.chatId);
                     setSender(chatUser?.user);
+                    console.log(chatUser?.user);
                   }}
                   className={`w-full  h-[81px]  cursor-pointer border-b ${
                     uid == chatUser?.chatId && sender && "bg-[#FFF6F0]"

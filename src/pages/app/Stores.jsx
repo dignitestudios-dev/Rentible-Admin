@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import DateFilterModal from "../../components/app/products/DateFilterModal";
-import { FiSearch } from "react-icons/fi";
+import { FiLoader, FiSearch } from "react-icons/fi";
 import {
   convertToUTCTimestamp,
   formatDateToMMDDYYYY,
@@ -8,12 +8,15 @@ import {
 import { IoCalendarOutline } from "react-icons/io5";
 import Cookies from "js-cookie";
 import axios from "../../axios";
-import { ErrorToast } from "../../components/global/Toaster";
+import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 import _ from "lodash";
-import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
+import { RxCaretLeft, RxCaretRight, RxCross2 } from "react-icons/rx";
 import { BsCheckLg } from "react-icons/bs";
 import CustomerTableSkeleton from "../../skeletons/app/customers/CustomerTableSkeleton";
 import { useNavigate } from "react-router-dom";
+import { IoMdCheckmark } from "react-icons/io";
+import CustomerApproveModal from "../../components/app/customers/CustomerApproveModal";
+import CustomerApproved from "../../components/app/customers/CustomerApproved";
 
 const Stores = () => {
   const navigate = useNavigate();
@@ -245,68 +248,7 @@ const Stores = () => {
           ) : customers?.length > 0 ? (
             customers?.map((customer, key) => {
               return (
-                <div
-                  onClick={() => {
-                    navigate(`/stores/${customer?._id}`, {
-                      state: customer,
-                    });
-                  }}
-                  className="w-full cursor-pointer grid grid-cols-12 h-[77px] text-[#202224] "
-                >
-                  <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
-                    <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
-                      <img
-                        src={
-                          customer?.profilePicture ||
-                          "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
-                        }
-                        alt="store_image"
-                        className="w-[38px] h-[38px] rounded-full"
-                      />
-                    </span>
-                    <span className="text-[13px] font-normal">
-                      {customer?.name || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-2 flex items-center justify-start h-full ">
-                    <span className="text-[13px] font-normal">
-                      {customer?.email || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-2 flex items-center justify-start h-full ">
-                    <span className="text-[13px] font-normal">
-                      {customer?.phone || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-3 flex items-center justify-start h-full ">
-                    <span className="text-[13px] font-normal">
-                      {customer?.address || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-1 flex items-center justify-start h-full ">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        setActive((prev) => !prev);
-                      }}
-                      className={`w-[34.26px] h-[18px] rounded-full   flex ${
-                        active
-                          ? "bg-[#F85E00] justify-end"
-                          : "justify-start bg-[#d9d9d9]"
-                      }  p-[1.5px]  `}
-                    >
-                      <span className="w-[15.7px] h-[15.7px] rounded-full bg-white shadow "></span>
-                    </button>
-                  </span>
-
-                  <span className="w-full col-span-1 flex items-center justify-end h-full  px-6">
-                    <span className="text-[20px] font-normal">
-                      <RxCaretRight />
-                    </span>
-                  </span>
-                </div>
+                <StoreRow customer={customer} key={key} setUpdate={setUpdate} />
               );
             })
           ) : (
@@ -369,3 +311,178 @@ const Stores = () => {
 };
 
 export default Stores;
+
+const StoreRow = ({ customer, setUpdate }) => {
+  const navigate = useNavigate();
+
+  const [activationLoading, setActivationLoading] = useState(false);
+  const toggleActivation = async (bool, store) => {
+    try {
+      setActivationLoading(true);
+      const { data } = await axios.post(`/admin/toggleActivation`, {
+        storeId: store?._id,
+        isDeactivatedByAdmin: bool,
+      });
+      if (data?.success) {
+        SuccessToast(data?.message);
+        setUpdate((prev) => !prev);
+      }
+    } catch (error) {
+      ErrorToast(error?.response?.data?.message || "Something went wrong.");
+    } finally {
+      setActivationLoading(false);
+    }
+  };
+
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [isApproved, setIsApproved] = useState(false);
+  const [openApproved, setOpenApproved] = useState(false);
+  const [reporting, setReporting] = useState(false);
+
+  const approveUser = async (id, isApproved) => {
+    try {
+      setReporting(true);
+      const response = await axios.post("/admin/verifyStore", {
+        storeId: id,
+        status: isApproved ? "approved" : "rejected",
+      });
+      if (response?.data?.success) {
+        setUpdate((prev) => !prev);
+        setOpenApproved(true);
+      }
+    } catch (error) {
+      ErrorToast(error?.response?.data?.message || "Something went wrong.");
+    } finally {
+      // test
+      setReporting(false);
+    }
+  };
+  return (
+    <>
+      <CustomerApproveModal
+        isOpen={openConfirm}
+        onRequestClose={() => setOpenConfirm(false)}
+        onConfirm={() => {
+          approveUser(customer?._id, isApproved);
+        }}
+        isApproved={isApproved}
+        loading={reporting}
+      />
+
+      <CustomerApproved
+        isOpen={openApproved}
+        onRequestClose={() => setOpenApproved(false)}
+        onConfirm={() => {
+          setOpenApproved(false);
+        }}
+      />
+
+      <div
+        onClick={() => {
+          navigate(`/stores/${customer?._id}`, {
+            state: customer,
+          });
+        }}
+        className="w-full cursor-pointer grid grid-cols-12 h-[77px] text-[#202224] "
+      >
+        <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
+          <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+            <img
+              src={
+                customer?.profilePicture ||
+                "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+              }
+              alt="store_image"
+              className="w-[38px] h-[38px] rounded-full"
+            />
+          </span>
+          <span className="text-[13px] font-normal">
+            {customer?.name || "N/A"}
+          </span>
+        </span>
+        <span className="w-full col-span-2 flex items-center justify-start h-full">
+          <span className="text-[13px] font-normal break-words overflow-hidden text-ellipsis">
+            {customer?.email || "N/A"}
+          </span>
+        </span>
+        <span className="w-full col-span-2 flex items-center justify-start h-full ">
+          <span className="text-[13px] font-normal">
+            {customer?.phone || "N/A"}
+          </span>
+        </span>
+        <span className="w-full col-span-3 flex items-center justify-start h-full ">
+          <span className="text-[13px] font-normal">
+            {customer?.address || "N/A"}
+          </span>
+        </span>
+        <span className="w-full col-span-1 flex items-center justify-start h-full ">
+          <button
+            disabled={activationLoading}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+
+              toggleActivation(
+                customer?.isDeactivatedByAdmin ? false : true,
+                customer
+              );
+
+              // setActive((prev) => !prev);
+            }}
+            className={`w-[34.26px] h-[18px] rounded-full   flex ${
+              !customer?.isDeactivatedByAdmin
+                ? "bg-[#F85E00] justify-end"
+                : "justify-start bg-[#d9d9d9]"
+            }  p-[1.5px]  `}
+          >
+            {activationLoading ? (
+              <FiLoader className="text-md text-white" />
+            ) : (
+              <span className="w-[15.7px] h-[15.7px] rounded-full bg-white shadow "></span>
+            )}
+          </button>
+        </span>
+
+        <span className="w-full col-span-1 flex items-center justify-end h-full  px-6">
+          {!(
+            customer?.identityStatus == "approved" ||
+            customer?.identityStatus == "rejected"
+          ) && (
+            <div className="w-auto flex justify-start items-center gap-3">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setOpenConfirm(true);
+                  setIsApproved(false);
+                }}
+                className="w-[25px] h-[25px] rounded-[4px] bg-[#FF3E46] text-white flex gap-2 items-center justify-center"
+              >
+                <span className="text-[14px] font-normal leading-[21px] ">
+                  <RxCross2 />
+                </span>
+                {/* {loading && <FiLoader className="animate-spin text-lg " />} */}
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setOpenConfirm(true);
+                  setIsApproved(true);
+                }}
+                className="w-[25px] h-[25px] rounded-[4px] bg-[#00DC67] text-white flex gap-2 items-center justify-center"
+              >
+                <span className="text-[14px] font-normal leading-[21px] ">
+                  <IoMdCheckmark />
+                </span>
+                {/* {loading && <FiLoader className="animate-spin text-lg " />} */}
+              </button>
+            </div>
+          )}
+        </span>
+      </div>
+    </>
+  );
+};

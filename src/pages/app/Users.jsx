@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import DateFilterModal from "../../components/app/products/DateFilterModal";
-import { FiSearch } from "react-icons/fi";
+import { FiLoader, FiSearch } from "react-icons/fi";
 import {
   convertToUTCTimestamp,
   formatDateToMMDDYYYY,
@@ -8,7 +8,7 @@ import {
 import { IoCalendarOutline } from "react-icons/io5";
 import Cookies from "js-cookie";
 import axios from "../../axios";
-import { ErrorToast } from "../../components/global/Toaster";
+import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 import _ from "lodash";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { BsCheckLg } from "react-icons/bs";
@@ -244,69 +244,9 @@ const Users = () => {
             })
           ) : customers?.length > 0 ? (
             customers?.map((customer, key) => {
+              // const [active, setActive] = useState(customer?.isA);
               return (
-                <div
-                  onClick={() => {
-                    navigate(`/users/${customer?._id}`, {
-                      state: customer,
-                    });
-                  }}
-                  className="w-full cursor-pointer grid grid-cols-12 h-[77px] text-[#202224] "
-                >
-                  <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
-                    <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
-                      <img
-                        src={
-                          customer?.profilePicture ||
-                          "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
-                        }
-                        alt="store_image"
-                        className="w-[38px] h-[38px] rounded-full"
-                      />
-                    </span>
-                    <span className="text-[13px] font-normal">
-                      {customer?.name || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-2 flex items-center justify-start h-full ">
-                    <span className="text-[13px] font-normal">
-                      {customer?.email || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-2 flex items-center justify-start h-full ">
-                    <span className="text-[13px] font-normal">
-                      {customer?.phone || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-3 flex items-center justify-start h-full ">
-                    <span className="text-[13px] font-normal">
-                      {customer?.address || "N/A"}
-                    </span>
-                  </span>
-                  <span className="w-full col-span-1 pl-2 flex items-center justify-start h-full ">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        setActive((prev) => !prev);
-                      }}
-                      className={`w-[34.26px] h-[18px] rounded-full   flex ${
-                        active
-                          ? "bg-[#F85E00] justify-end"
-                          : "justify-start bg-[#d9d9d9]"
-                      }  p-[1.5px]  `}
-                    >
-                      <span className="w-[15.7px] h-[15.7px] rounded-full bg-white shadow "></span>
-                    </button>
-                  </span>
-
-                  <span className="w-full col-span-1 flex items-center justify-end h-full  px-6">
-                    <span className="text-[20px] font-normal">
-                      <RxCaretRight />
-                    </span>
-                  </span>
-                </div>
+                <UserRow customer={customer} key={key} setUpdate={setUpdate} />
               );
             })
           ) : (
@@ -369,3 +309,99 @@ const Users = () => {
 };
 
 export default Users;
+
+const UserRow = ({ customer, setUpdate }) => {
+  const navigate = useNavigate();
+
+  const [activationLoading, setActivationLoading] = useState(false);
+  const toggleActivation = async (bool, user) => {
+    try {
+      setActivationLoading(true);
+      const { data } = await axios.post(`/admin/toggleActivation`, {
+        userId: user?._id,
+        isDeactivatedByAdmin: bool,
+      });
+      if (data?.success) {
+        SuccessToast(data?.message);
+
+        setUpdate((prev) => !prev);
+      }
+    } catch (error) {
+      ErrorToast(error?.response?.data?.message || "Something went wrong.");
+    } finally {
+      setActivationLoading(false);
+    }
+  };
+  return (
+    <div
+      onClick={() => {
+        navigate(`/users/${customer?._id}`, {
+          state: customer,
+        });
+      }}
+      className="w-full cursor-pointer grid grid-cols-12 h-[77px] text-[#202224] "
+    >
+      <span className="w-full px-4 col-span-3 flex items-center gap-2 justify-start h-full ">
+        <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
+          <img
+            src={
+              customer?.profilePicture ||
+              "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+            }
+            alt="store_image"
+            className="w-[38px] h-[38px] rounded-full"
+          />
+        </span>
+        <span className="text-[13px] font-normal">
+          {customer?.name || "N/A"}
+        </span>
+      </span>
+      <span className="w-full col-span-2 flex items-center justify-start h-full">
+        <span className="text-[13px] font-normal break-words overflow-hidden text-ellipsis">
+          {customer?.email || "N/A"}
+        </span>
+      </span>
+      <span className="w-full col-span-2 flex items-center justify-start h-full ">
+        <span className="text-[13px] font-normal">
+          {customer?.phone || "N/A"}
+        </span>
+      </span>
+      <span className="w-full col-span-3 flex items-center justify-start h-full ">
+        <span className="text-[13px] font-normal">
+          {customer?.address || "N/A"}
+        </span>
+      </span>
+      <span className="w-full col-span-1 pl-2 flex items-center justify-start h-full ">
+        <button
+          disabled={activationLoading}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleActivation(
+              customer?.isDeactivatedByAdmin ? false : true,
+              customer
+            );
+            // setActive((prev) => !prev);
+          }}
+          className={`w-[34.26px] h-[18px] rounded-full   flex ${
+            !customer?.isDeactivatedByAdmin
+              ? "bg-[#F85E00] justify-end"
+              : "justify-start bg-[#d9d9d9]"
+          }  p-[1.5px]  `}
+        >
+          {activationLoading ? (
+            <FiLoader className="text-md text-white" />
+          ) : (
+            <span className="w-[15.7px] h-[15.7px] rounded-full bg-white shadow "></span>
+          )}
+        </button>
+      </span>
+
+      <span className="w-full col-span-1 flex items-center justify-end h-full  px-6">
+        <span className="text-[20px] font-normal">
+          <RxCaretRight />
+        </span>
+      </span>
+    </div>
+  );
+};
