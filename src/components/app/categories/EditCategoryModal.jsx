@@ -13,6 +13,7 @@ const EditCategoryModal = ({ isOpen, onRequestClose, setUpdate, category }) => {
   const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  //
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
