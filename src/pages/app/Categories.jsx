@@ -113,7 +113,7 @@ const Categories = () => {
         <DeleteSubCategoryConfirm
           isOpen={deleteSubCategoryOpen}
           onRequestClose={() => setDeleteSubCategoryOpen(false)}
-          setUpdate={setUpdate}
+          setUpdate={setUpdateSub}
           category={deleteCategory}
         />
 
@@ -217,14 +217,14 @@ const Categories = () => {
         <AddSubCategoryModal
           isOpen={isSubCategoryOpen}
           onRequestClose={() => setIsSubCategoryOpen(false)}
-          setUpdate={setUpdate}
+          setUpdate={setUpdateSub}
           categories={categories || []}
         />
 
         <EditSubCategoryModal
           isOpen={isUpdateSubCategoryOpen}
           onRequestClose={() => setIsUpdateSubCategoryOpen(false)}
-          setUpdate={setUpdate}
+          setUpdate={setUpdateSub}
           categories={categories || []}
           category={selectedSubCategory}
         />

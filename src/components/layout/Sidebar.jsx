@@ -8,12 +8,12 @@ const Sidebar = () => {
   const { sidebarOpen, setSidebarOpen } = useContext(AppContext);
   return (
     <div
-      className={`w-full lg:w-[242.8px] h-[calc(100%-3.5rem)] flex justify-start items-start transition-all duration-300  absolute top-14 left-0 ${
+      className={`w-full lg:w-[242.8px] h-[calc(100%-0rem)] flex justify-start items-start transition-all duration-300  absolute top-14 left-0 ${
         sidebarOpen ? "translate-x-0 z-40" : " -translate-x-full z-40"
       } lg:translate-x-0 lg:static lg:z-auto `}
     >
       <div
-        className={`w-[242.8px] h-full overflow-y-auto z-40 bg-white py-2  flex flex-col justify-start items-start gap-[1px]  `}
+        className={`w-[242.8px] h-full overflow-y-auto z-40 bg-white py-2  grid grid-cols-1 flex-col justify-start items-start gap-[1px]  `}
       >
         {sidebar?.map((link, key) => {
           return (

@@ -447,8 +447,8 @@ const StoreRow = ({ customer, setUpdate }) => {
           {!(
             customer?.identityStatus == "approved" ||
             customer?.identityStatus == "rejected"
-          ) && (
-            <div className="w-auto flex justify-start items-center gap-3">
+          ) ? (
+            <div className="w-auto flex justify-start items-center gap-1">
               <button
                 type="button"
                 onClick={(e) => {
@@ -480,6 +480,10 @@ const StoreRow = ({ customer, setUpdate }) => {
                 {/* {loading && <FiLoader className="animate-spin text-lg " />} */}
               </button>
             </div>
+          ) : (
+            <span className="text-[20px] font-normal">
+              <RxCaretRight />
+            </span>
           )}
         </span>
       </div>

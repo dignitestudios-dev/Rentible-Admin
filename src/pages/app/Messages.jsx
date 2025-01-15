@@ -275,7 +275,7 @@ const Messages = () => {
           profilePicture: senderUid?.profilePicture,
         },
         title: store?.name,
-        description: message?.content,
+        description: message?.type == "file" ? "Image File" : message?.content,
         chatId: uid,
       });
     } catch (error) {

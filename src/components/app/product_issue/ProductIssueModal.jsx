@@ -1,14 +1,37 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Modal from "react-modal";
 import { IoMdClose } from "react-icons/io";
 import { FaExclamation } from "react-icons/fa";
 import { formatDateToMMDDYYYY } from "../../../utils/helper";
 import { AppContext } from "../../../context/AppContext";
 import { useNavigate } from "react-router-dom";
+import axios from "../../../axios";
+import { ErrorToast } from "../../global/Toaster";
+import { FiLoader } from "react-icons/fi";
 
 const ProductIssueModal = ({ isOpen, onRequestClose, issue }) => {
-  const { setUid } = useContext(AppContext);
+  const { setUid, setSender } = useContext(AppContext);
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const createUserChatRoom = async (userId = null, user) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.post(`/admin/createChat`, {
+        userId: userId,
+      });
+      if (data?.success) {
+        setSender(user);
+        setUid(data?.data);
+        localStorage.setItem("activeLink", "Messages");
+        navigate("/messages");
+      }
+    } catch (error) {
+      ErrorToast(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Modal
       isOpen={isOpen}
@@ -104,22 +127,25 @@ const ProductIssueModal = ({ isOpen, onRequestClose, issue }) => {
                     </div>
                   </div>
 
-                  {issue?.reportedByUser?.chatId && (
-                    <button
-                      onClick={() => {
-                        navigate("/messages");
-                        localStorage.setItem("activeLink", "Messages");
-                        setUid(issue?.reportedByUser?.chatId);
-                      }}
-                      className="w-[31px] h-[31px] flex items-center justify-center"
-                    >
+                  <button
+                    onClick={() => {
+                      createUserChatRoom(
+                        issue?.reportedByUser?._id,
+                        issue?.reportedByUser
+                      );
+                    }}
+                    className="w-[31px] h-[31px] rounded-md  bg-orange-500 flex items-center justify-center"
+                  >
+                    {loading ? (
+                      <FiLoader className="text-lg text-white animate-spin" />
+                    ) : (
                       <img
                         src="/chat-icon.png"
                         alt="Chat Icon"
                         className="w-full h-full"
                       />
-                    </button>
-                  )}
+                    )}
+                  </button>
                 </>
               ) : (
                 <>
