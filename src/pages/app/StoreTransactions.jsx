@@ -123,51 +123,31 @@ const StoreTransactions = () => {
     }
   };
 
-  // const [balance, setBalance] = useState(null);
-  // const [balLoading, setBalLoading] = useState(false);
-  // const getBalance = async () => {
-  //   try {
-  //     setBalLoading(true);
-  //     const { data } = await axios.get(`/balance`);
+  const [balance, setBalance] = useState(null);
+  const [balLoading, setBalLoading] = useState(false);
+  const getBalance = async () => {
+    try {
+      setBalLoading(true);
+      const { data } = await axios.get(
+        `/admin/transactionSums?rentalType=store`
+      );
 
-  //     setBalance(data?.data); // Store the actual data from the response
-  //   } catch (error) {
-  //     ErrorToast(error?.response?.data?.message || "Something went wrong.");
-  //     console.log("Error:", error);
-  //   } finally {
-  //     setBalLoading(false);
-  //   }
-  // };
-
-  const [isBankOpen, setIsBankOpen] = useState(false);
-  const [bank, setBank] = useState(null);
-  const [bankLoading, setBankLoading] = useState(false);
-  // const getBank = async () => {
-  //   try {
-  //     setBankLoading(true);
-  //     const { data } = await axios.get(`/balance/bank`);
-
-  //     setBank(data?.data); // Store the actual data from the response
-  //   } catch (error) {
-  //     ErrorToast(error?.response?.data?.message || "Something went wrong.");
-  //     console.log("Error:", error);
-  //   } finally {
-  //     setBankLoading(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getBank();
-  // }, [isBankOpen]);
-  //
+      setBalance(data?.data); // Store the actual data from the response
+    } catch (error) {
+      ErrorToast(error?.response?.data?.message || "Something went wrong.");
+      console.log("Error:", error);
+    } finally {
+      setBalLoading(false);
+    }
+  };
 
   useEffect(() => {
     activeTab == "withdrawn" ? getWihtdrawal() : getTransaction();
   }, [update, isApplied, currentPage, activeTab]);
 
-  // useEffect(() => {
-  //   getBalance();
-  // }, []);
+  useEffect(() => {
+    getBalance();
+  }, []);
 
   const [openWithdraw, setOpenWithdraw] = useState(false);
 
@@ -351,19 +331,12 @@ const StoreTransactions = () => {
         </div>
       </div>
 
-      {/* {balLoading || bankLoading ? (
+      {balLoading ? (
         <div className="w-full h-auto py-8 lg:py-0 lg:min-h-[137px] rounded-[18px] bg-white animate-pulse px-4 lg:px-8 flex flex-row justify-between items-center ">
           <div className="w-[70%] h-full flex flex-col justify-center  items-start">
-            <h3 className="text-[20px] font-medium leading-[30px]">
-              Available Balance
-            </h3>
+            <h3 className="text-[20px] h-3 w-28 rounded-full bg-gray-200 animate-pulse font-medium leading-[30px]"></h3>
 
-            <span className="text-[40px] font-bold leading-[60px] text-[#202224]">
-              ${" "}
-              {balance?.availableBalance
-                ? balance?.availableBalance?.amount
-                : 0}
-            </span>
+            <span className="text-[40px] h-3 w-20 rounded-full bg-gray-100 animate-pulse font-bold leading-[60px] text-[#202224]"></span>
           </div>
           <button
             type="button"
@@ -374,33 +347,27 @@ const StoreTransactions = () => {
           </button>
         </div>
       ) : (
-        <div className="w-full h-auto py-8 lg:py-0 lg:min-h-[137px] rounded-[18px] bg-white px-4 lg:pl-4 lg:pr-8 flex flex-row justify-between items-center ">
-          <div className="w-[70%] h-full flex  justify-start  items-center gap-2">
-            <div className="w-auto py-2 px-4 flex flex-col justify-center bg-[#F85E00]  rounded-xl items-start">
-              <h3 className="text-[20px] font-medium leading-[30px] text-white">
-                Available Balance
-              </h3>
+        <div className="w-full h-auto py-8 lg:py-0 lg:min-h-[137px] rounded-[18px] bg-white  px-4 lg:px-8 flex flex-row justify-between items-center ">
+          <div className="w-[70%] h-full flex flex-col justify-center  items-start">
+            <h3 className="text-[20px] font-medium leading-[30px]">
+              {activeTab == "paid"
+                ? "Total Rentals Revenue"
+                : activeTab == "earning"
+                ? "Total Earning Revenue"
+                : "Total Cash Withdrawal"}
+            </h3>
 
-              <span className="text-[40px] font-bold leading-[60px] text-[#fdfdfd]">
-                ${" "}
-                {balance?.availableBalance
-                  ? balance?.availableBalance?.amount
-                  : 0}
-              </span>
-            </div>
-            <div className="w-auto py-2 px-4 flex flex-col justify-center bg-[#F85E00]  rounded-xl items-start">
-              <h3 className="text-[20px] font-medium leading-[30px] text-white">
-                Pending Balance
-              </h3>
-
-              <span className="text-[40px] font-bold leading-[60px] text-[#fdfdfd]">
-                ${" "}
-                {balance?.pendingBalance ? balance?.pendingBalance?.amount : 0}
-              </span>
-            </div>
+            <span className="text-[40px] font-bold leading-[60px] text-[#202224]">
+              ${" "}
+              {activeTab == "paid"
+                ? balance?.revenue
+                : activeTab == "earning"
+                ? balance?.earning
+                : balance?.withdrawal}
+            </span>
           </div>
         </div>
-      )} */}
+      )}
 
       <div className="w-full   flex flex-col  py-4  justify-start items-start gap-6">
         <div className="w-full h-auto flex flex-col gap-3 justify-start items-start">

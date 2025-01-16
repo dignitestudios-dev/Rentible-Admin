@@ -123,51 +123,33 @@ const UserTransactions = () => {
     }
   };
 
-  // const [balance, setBalance] = useState(null);
-  // const [balLoading, setBalLoading] = useState(false);
-  // const getBalance = async () => {
-  //   try {
-  //     setBalLoading(true);
-  //     const { data } = await axios.get(`/balance`);
+  const [balance, setBalance] = useState(null);
+  const [balLoading, setBalLoading] = useState(false);
+  const getBalance = async () => {
+    try {
+      setBalLoading(true);
+      const { data } = await axios.get(
+        `/admin/transactionSums?rentalType=user`
+      );
 
-  //     setBalance(data?.data); // Store the actual data from the response
-  //   } catch (error) {
-  //     ErrorToast(error?.response?.data?.message || "Something went wrong.");
-  //     console.log("Error:", error);
-  //   } finally {
-  //     setBalLoading(false);
-  //   }
-  // };
+      setBalance(data?.data); // Store the actual data from the response
+    } catch (error) {
+      ErrorToast(error?.response?.data?.message || "Something went wrong.");
+      console.log("Error:", error);
+    } finally {
+      setBalLoading(false);
+    }
+  };
 
-  const [isBankOpen, setIsBankOpen] = useState(false);
-  const [bank, setBank] = useState(null);
-  const [bankLoading, setBankLoading] = useState(false);
-  // const getBank = async () => {
-  //   try {
-  //     setBankLoading(true);
-  //     const { data } = await axios.get(`/balance/bank`);
-
-  //     setBank(data?.data); // Store the actual data from the response
-  //   } catch (error) {
-  //     ErrorToast(error?.response?.data?.message || "Something went wrong.");
-  //     console.log("Error:", error);
-  //   } finally {
-  //     setBankLoading(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getBank();
-  // }, [isBankOpen]);
   //
 
   useEffect(() => {
     activeTab == "withdrawn" ? getWihtdrawal() : getTransaction();
   }, [update, isApplied, currentPage, activeTab]);
 
-  // useEffect(() => {
-  //   getBalance();
-  // }, []);
+  useEffect(() => {
+    getBalance();
+  }, []);
 
   const [openWithdraw, setOpenWithdraw] = useState(false);
 
@@ -235,9 +217,9 @@ const UserTransactions = () => {
                 Rentals Paid
               </button>
               <button
-                onClick={() => setActiveTab("earned")}
+                onClick={() => setActiveTab("earning")}
                 className={`min-w-[90px] px-4 py-2 capitalize text-sm font-normal leading-[17.58px] ${
-                  activeTab === "earned"
+                  activeTab === "earning"
                     ? "bg-[#F85E00] text-white"
                     : "bg-white text-black"
                 }  `}
@@ -361,19 +343,14 @@ const UserTransactions = () => {
         </div>
       </div>
 
-      {/* {balLoading || bankLoading ? (
+      {balLoading ? (
         <div className="w-full h-auto py-8 lg:py-0 lg:min-h-[137px] rounded-[18px] bg-white animate-pulse px-4 lg:px-8 flex flex-row justify-between items-center ">
           <div className="w-[70%] h-full flex flex-col justify-center  items-start">
             <h3 className="text-[20px] font-medium leading-[30px]">
               Available Balance
             </h3>
 
-            <span className="text-[40px] font-bold leading-[60px] text-[#202224]">
-              ${" "}
-              {balance?.availableBalance
-                ? balance?.availableBalance?.amount
-                : 0}
-            </span>
+            <span className="text-[40px] h-3 w-20 rounded-full bg-gray-100 animate-pulse font-bold leading-[60px] text-[#202224]"></span>
           </div>
           <button
             type="button"
@@ -384,33 +361,27 @@ const UserTransactions = () => {
           </button>
         </div>
       ) : (
-        <div className="w-full h-auto py-8 lg:py-0 lg:min-h-[137px] rounded-[18px] bg-white px-4 lg:pl-4 lg:pr-8 flex flex-row justify-between items-center ">
-          <div className="w-[70%] h-full flex  justify-start  items-center gap-2">
-            <div className="w-auto py-2 px-4 flex flex-col justify-center bg-[#F85E00]  rounded-xl items-start">
-              <h3 className="text-[20px] font-medium leading-[30px] text-white">
-                Available Balance
-              </h3>
+        <div className="w-full h-auto py-8 lg:py-0 lg:min-h-[137px] rounded-[18px] bg-white  px-4 lg:px-8 flex flex-row justify-between items-center ">
+          <div className="w-[70%] h-full flex flex-col justify-center  items-start">
+            <h3 className="text-[20px] font-medium leading-[30px]">
+              {activeTab == "paid"
+                ? "Total Rentals Revenue"
+                : activeTab == "earning"
+                ? "Total Earning Revenue"
+                : "Total Cash Withdrawal"}
+            </h3>
 
-              <span className="text-[40px] font-bold leading-[60px] text-[#fdfdfd]">
-                ${" "}
-                {balance?.availableBalance
-                  ? balance?.availableBalance?.amount
-                  : 0}
-              </span>
-            </div>
-            <div className="w-auto py-2 px-4 flex flex-col justify-center bg-[#F85E00]  rounded-xl items-start">
-              <h3 className="text-[20px] font-medium leading-[30px] text-white">
-                Pending Balance
-              </h3>
-
-              <span className="text-[40px] font-bold leading-[60px] text-[#fdfdfd]">
-                ${" "}
-                {balance?.pendingBalance ? balance?.pendingBalance?.amount : 0}
-              </span>
-            </div>
+            <span className="text-[40px] font-bold leading-[60px] text-[#202224]">
+              ${" "}
+              {activeTab == "paid"
+                ? balance?.revenue
+                : activeTab == "earning"
+                ? balance?.earning
+                : balance?.withdrawal}
+            </span>
           </div>
         </div>
-      )} */}
+      )}
 
       <div className="w-full   flex flex-col  py-4  justify-start items-start gap-6">
         <div className="w-full h-auto flex flex-col gap-3 justify-start items-start">
@@ -418,7 +389,7 @@ const UserTransactions = () => {
             <span className="text-[26px] md:text-[28px] lg:text-[32px] font-bold leading-[48px] text-[#202224]">
               {activeTab == "paid"
                 ? "Rentals Paid History"
-                : activeTab == "earned"
+                : activeTab == "earning"
                 ? "Rental Earning History"
                 : "Withdrawal History"}{" "}
             </span>
@@ -465,7 +436,7 @@ const UserTransactions = () => {
           ) : (
             <div className="w-full overflow-x-auto lg:overflow-x-hidden flex flex-col justify-start items-start gap-6">
               <div className="min-w-[960px] w-full flex flex-col justify-start pb-4 items-start">
-                {activeTab == "earned" || activeTab == "paid" ? (
+                {activeTab == "earning" || activeTab == "paid" ? (
                   <div className="w-full border-t border-x h-[49px] bg-[#FCFDFD] border-gray-300 rounded-t-[14px] grid grid-cols-12 ">
                     <span className="w-full col-span-2 px-4 flex items-center justify-start h-full ">
                       <span className="text-[13px] font-medium">
@@ -524,8 +495,8 @@ const UserTransactions = () => {
                     [1, 2, 3, 4]?.map((item, key) => {
                       return <RentalListSkeleton key={key} />;
                     })
-                  ) : activeTab == "earned" ||
-                    (activeTab == "paid" && transactions?.length > 0) ? (
+                  ) : (activeTab == "earning" || activeTab == "paid") &&
+                    transactions?.length > 0 ? (
                     transactions?.map((rental, key) => {
                       return (
                         <div
@@ -713,7 +684,7 @@ const UserTransactions = () => {
                   )}
 
                 {activeTab == "paid" ||
-                  (activeTab == "earned" &&
+                  (activeTab == "earning" &&
                     !transactionLoading &&
                     transactions?.length > 0 && (
                       <div className="min-w-[960px] my-6 w-full  px-2 flex justify-between items-center">

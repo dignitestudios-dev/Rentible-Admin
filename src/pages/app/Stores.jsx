@@ -444,10 +444,7 @@ const StoreRow = ({ customer, setUpdate }) => {
         </span>
 
         <span className="w-full col-span-1 flex items-center justify-end h-full  px-6">
-          {!(
-            customer?.identityStatus == "approved" ||
-            customer?.identityStatus == "rejected"
-          ) ? (
+          {customer?.identityStatus == "pending" ? (
             <div className="w-auto flex justify-start items-center gap-1">
               <button
                 type="button"
