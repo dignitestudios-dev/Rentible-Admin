@@ -57,7 +57,7 @@ const OtpVerification = () => {
           if (response?.data?.success) {
             Cookies.set("token", response?.data?.data?.token, { expires: 15 });
             const store = response?.data?.data?.user;
-            Cookies.set("store", JSON.stringify(store));
+            Cookies.set("store", JSON.stringify(store), { expires: 60 });
             SuccessToast("OTP Verfied Successfully.");
             navigate("/change-password");
             setLoading(false);

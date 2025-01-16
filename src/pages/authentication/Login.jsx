@@ -40,8 +40,8 @@ const Login = () => {
           const response = await axios.post("/auth/signIn", verifiedLoginData);
           if (response.status === 200) {
             const admin = response?.data?.data?.admin;
-            Cookies.set("store", JSON.stringify(admin));
-            Cookies.set("token", response?.data?.data?.token, { expires: 15 });
+            Cookies.set("store", JSON.stringify(admin), { expires: 60 });
+            Cookies.set("token", response?.data?.data?.token, { expires: 60 });
             const userCredential = await signInWithEmailAndPassword(
               auth,
               values?.email,
