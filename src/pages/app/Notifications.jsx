@@ -14,7 +14,7 @@ const SwipeableNotification = ({ notification, getTimeAgo, setUpdate }) => {
   const deleteNotification = async (id) => {
     try {
       setDeleteOne(true);
-      const response = await axios.delete(`/notification/${id}`);
+      const response = await axios.delete(`/admin/notifications/${id}`);
       if (response?.data?.success) {
         setUpdate((prev) => !prev);
         SuccessToast("Notification deleted successfully.");

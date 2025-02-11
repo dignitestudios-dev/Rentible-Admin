@@ -15,8 +15,12 @@ const AddNotificationModal = ({ isOpen, onRequestClose, setUpdate }) => {
   const addNotification = async () => {
     if (title == "") {
       ErrorToast("Title cannot be left empty.");
+    } else if (title.length > 25) {
+      ErrorToast("Title cannot exceed 25 characters.");
     } else if (description == "") {
       ErrorToast("Description cannot be left empty.");
+    } else if (description.length > 70) {
+      ErrorToast("Description cannot exceed 70 characters.");
     } else {
       try {
         setLoading(true);
@@ -55,6 +59,7 @@ const AddNotificationModal = ({ isOpen, onRequestClose, setUpdate }) => {
           type="text"
           placeholder="Notification Title"
           value={title}
+          maxLength={25}
           onChange={(e) => setTitle(e.target.value)}
           className="w-[385px] h-[49px] rounded-[8px] outline-none px-3 bg-gray-100 my-2"
         />
@@ -63,6 +68,7 @@ const AddNotificationModal = ({ isOpen, onRequestClose, setUpdate }) => {
           type="text"
           placeholder="Notification Description"
           value={description}
+          maxLength={70}
           onChange={(e) => setDescription(e.target.value)}
           className="w-[385px] h-[109px] rounded-[8px] outline-none resize-none p-3 bg-gray-100 my-2"
         ></textarea>

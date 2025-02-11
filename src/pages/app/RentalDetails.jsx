@@ -552,7 +552,9 @@ const RentalDetails = () => {
                   Phone Number
                 </span>
                 <span className="text-[12px] font-normal text-[#818181] leading-[18px]">
-                  {formatPhoneNumberInput(rental?.store?.phone) || "N/A"}
+                  {formatPhoneNumberInput(
+                    rental?.store?.phone || rental?.user?.phone || ""
+                  ) || "N/A"}
                 </span>
               </div>
             </div>

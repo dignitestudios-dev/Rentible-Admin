@@ -408,7 +408,7 @@ const StoreRow = ({ customer, setUpdate }) => {
         </span>
         <span className="w-full col-span-2 flex items-center justify-start h-full ">
           <span className="text-[13px] font-normal">
-            {formatPhoneNumberInput(customer?.phone) || "N/A"}
+            {formatPhoneNumberInput(customer?.phone || "") || "N/A"}
           </span>
         </span>
         <span className="w-full col-span-3 flex items-center justify-start h-full ">

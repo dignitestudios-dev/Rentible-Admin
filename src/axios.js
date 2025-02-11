@@ -1,22 +1,44 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
+import { UAParser } from "ua-parser-js";
+import { v4 as uuidv4 } from "uuid";
 
 export const baseUrl = "https://api.rentibles.com";
 // export const baseUrl = "https://155e-45-199-187-86.ngrok-free.app";
 
-const generateDeviceId = () => {
-  const rawId = `${navigator.userAgent}-${navigator.platform}-${navigator.language}`;
+const generateDeviceId = (rawId) => {
   return CryptoJS.MD5(rawId).toString();
 };
 
-const id = generateDeviceId();
+const getDeviceName = () => {
+  const parser = new UAParser();
+  const result = parser.getResult();
+
+  const deviceName = result.device.model || "Unknown";
+  const deviceID = result.ua || "Unknown"; // User-Agent can serve as a unique identifier
+
+  return deviceName;
+};
+
+const getDeviceId = () => {
+  const parser = new UAParser();
+  const result = parser.getResult();
+  const uuid = uuidv4();
+
+  const deviceName = `${result.device.model}` || "Unknown";
+  const deviceID = result.ua || "Unknown"; // User-Agent can serve as a unique identifier
+
+  const preId = deviceName + uuid;
+
+  return preId;
+};
 
 const instance = axios.create({
   baseURL: baseUrl,
   headers: {
-    devicemodel: navigator.userAgent,
-    deviceuniqueid: id,
+    devicemodel: getDeviceName(),
+    deviceuniqueid: getDeviceId(),
     "ngrok-skip-browser-warning": "69420",
   },
 });

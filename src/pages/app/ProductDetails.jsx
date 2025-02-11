@@ -343,7 +343,9 @@ const ProductDetails = () => {
                 Phone Number
               </span>
               <span className="text-[12px] font-normal text-[#818181] leading-[18px]">
-                {formatPhoneNumberInput(product?.store?.phone) || "N/A"}
+                {formatPhoneNumberInput(
+                  product?.store?.phone || product?.user?.phone || ""
+                ) || "N/A"}
               </span>
             </div>
           </div>

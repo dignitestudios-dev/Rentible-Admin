@@ -246,7 +246,7 @@ const UserDetails = () => {
                 Phone Number
               </span>
               <span className="text-[16px] font-normal break-words text-wrap leading-[24px] text-[#000] max-w-full">
-                {formatPhoneNumberInput(user?.phone)}
+                {formatPhoneNumberInput(user?.phone || "")}
               </span>
             </div>
             <div className="w-full flex flex-col lg:pl-4 justify-center items-start">
