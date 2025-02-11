@@ -8,6 +8,7 @@ import { FiSearch } from "react-icons/fi";
 import {
   convertToUTCTimestamp,
   formatDateToMMDDYYYY,
+  formatPhoneNumberInput,
   getStatusClasses,
 } from "../../utils/helper";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -202,7 +203,7 @@ const StoreDetails = () => {
     type: "front",
   });
 
-  return user !== null ? (
+  return profile !== null ? (
     <div className="w-full h-full  flex flex-col gap-6  py-4 px-2 lg:px-6 justify-start items-start ">
       <div className="w-full h-auto flex flex-col gap-3 justify-start items-start">
         <div className="w-full relative flex flex-col lg:flex-row justify-between lg:items-center">
@@ -280,7 +281,7 @@ const StoreDetails = () => {
               "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
             }
             alt=""
-            className="w-full h-full rounded-t-[18px] bg-gray-200 object-contain"
+            className="w-full h-full rounded-t-[18px] bg-gray-200 object-scale-down"
           />
           <span className="w-[90px] lg:w-[144px] h-[90px] lg:h-[144px] absolute -bottom-11 left-2 lg:left-8 bg-white rounded-full border border-[#F85E00] flex items-center justify-center">
             <img
@@ -324,7 +325,7 @@ const StoreDetails = () => {
               <span className="text-[14px] font-normal leading-[24px]">
                 Email Address
               </span>
-              <span className="text-[14px] font-normal text-[#818181] leading-[23px]">
+              <span className="text-[14px] w-40 break-words font-normal text-[#818181] leading-[23px]">
                 {profile?.email || "N/A"}
               </span>
             </div>
@@ -334,7 +335,7 @@ const StoreDetails = () => {
                 Phone Number
               </span>
               <span className="text-[14px] font-normal text-[#818181] leading-[23px]">
-                {profile?.phone || "N/A"}
+                {formatPhoneNumberInput(profile?.phone || "") || "N/A"}
               </span>
             </div>
 
@@ -837,7 +838,7 @@ const StoreDetails = () => {
       <StoreProducts id={id} />
     </div>
   ) : (
-    "Product Not Found"
+    "Store Not Found"
   );
 };
 

@@ -26,6 +26,8 @@ const AddNotificationModal = ({ isOpen, onRequestClose, setUpdate }) => {
         });
         if (data?.success) {
           SuccessToast("Notification Created Successfully.");
+          setTitle("");
+          setDescription("");
           setUpdate((prev) => !prev);
           onRequestClose();
         }

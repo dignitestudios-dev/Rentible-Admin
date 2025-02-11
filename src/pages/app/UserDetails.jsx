@@ -8,6 +8,7 @@ import { FiSearch } from "react-icons/fi";
 import {
   convertToUTCTimestamp,
   formatDateToMMDDYYYY,
+  formatPhoneNumberInput,
   getStatusClasses,
 } from "../../utils/helper";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -209,7 +210,7 @@ const UserDetails = () => {
                 "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
               }
               alt="store_image"
-              className="w-[50px] lg:w-[110px] h-[50px] lg:h-[110px] rounded-full"
+              className="w-[50px] lg:w-[110px] h-[50px] lg:h-[110px] object-scale-down rounded-full"
             />
           </span>
           <div className="w-auto flex flex-col justify-start items-start">
@@ -245,7 +246,7 @@ const UserDetails = () => {
                 Phone Number
               </span>
               <span className="text-[16px] font-normal break-words text-wrap leading-[24px] text-[#000] max-w-full">
-                {user?.phone}
+                {formatPhoneNumberInput(user?.phone)}
               </span>
             </div>
             <div className="w-full flex flex-col lg:pl-4 justify-center items-start">

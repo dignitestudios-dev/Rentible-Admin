@@ -7,7 +7,10 @@ import { MdKeyboardBackspace } from "react-icons/md";
 import { FiLoader } from "react-icons/fi";
 import { Swiper } from "swiper/react";
 import { SwiperSlide } from "swiper/react";
-import { convertEpochTo12HourFormat } from "../../utils/helper";
+import {
+  convertEpochTo12HourFormat,
+  formatPhoneNumberInput,
+} from "../../utils/helper";
 import DeleteProductConfirm from "../../components/app/products/DeleteProductConfirm";
 import ProductReviews from "../../components/app/products/ProductReviews";
 
@@ -214,20 +217,21 @@ const ProductDetails = () => {
           <div className="w-auto flex justify-start items-center gap-2">
             <div className="w-auto flex flex-col text-right justify-start items-end">
               <span className="text-[20px] font-medium leading-[30px]">
-                {product?.user?.name}
+                {product?.user?.name || product?.store?.name || "N/A"}
               </span>
               <span className="text-[14px] font-normal leading-[21px] text-[#B0B0B0]">
-                {product?.user?.email}
+                {product?.user?.email || product?.store?.email || "N/A"}
               </span>
             </div>
             <span className="w-[59px] h-[59px] border border-[#F85E00] rounded-full flex items-center justify-center ">
               <img
                 src={
                   product?.user?.profilePicture ||
+                  product?.store?.profilePicture ||
                   "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
                 }
                 alt="store_image"
-                className="w-[54px] h-[54px] rounded-full"
+                className="w-[54px] h-[54px] object-scale-down rounded-full"
               />
             </span>
             <div></div>
@@ -339,7 +343,7 @@ const ProductDetails = () => {
                 Phone Number
               </span>
               <span className="text-[12px] font-normal text-[#818181] leading-[18px]">
-                {product?.store?.phone || "N/A"}
+                {formatPhoneNumberInput(product?.store?.phone) || "N/A"}
               </span>
             </div>
           </div>

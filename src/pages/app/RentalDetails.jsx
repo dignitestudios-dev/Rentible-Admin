@@ -12,6 +12,7 @@ import {
   convertEpochToMMDDYYYY,
   formatDateToMMDDYYYY,
   formatEpochToMMDDYYYY,
+  formatPhoneNumberInput,
   getDetailedStatusClasses,
   getStatusClasses,
 } from "../../utils/helper";
@@ -498,9 +499,15 @@ const RentalDetails = () => {
                   </span>
                 </span>
 
-                {!["completed", "cancelled", "incomplete", "rejected"].includes(
-                  rental?.status
-                ) && <Timer dropOffEpoch={rental?.dropOffTime} />}
+                {![
+                  "completed",
+                  "cancelled",
+                  "incomplete",
+                  "rejected",
+                  "pending",
+                ].includes(rental?.status) && (
+                  <Timer dropOffEpoch={rental?.dropOffTime} />
+                )}
               </div>
             </div>
 
@@ -545,7 +552,7 @@ const RentalDetails = () => {
                   Phone Number
                 </span>
                 <span className="text-[12px] font-normal text-[#818181] leading-[18px]">
-                  {rental?.store?.phone || "N/A"}
+                  {formatPhoneNumberInput(rental?.store?.phone) || "N/A"}
                 </span>
               </div>
             </div>
@@ -568,7 +575,7 @@ const RentalDetails = () => {
                   Order Created
                 </span>
                 <span className="text-[12px] font-normal text-[#818181] leading-[18px]">
-                  {formatEpochToMMDDYYYY(rental?.bookingDate) || "N/A"}
+                  {formatDateToMMDDYYYY(rental?.createdAt) || "N/A"}
                 </span>
               </div>
               {/* <div className="w-[3%] h-14 flex items-center justify-start">

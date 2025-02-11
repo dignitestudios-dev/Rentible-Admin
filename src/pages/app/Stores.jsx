@@ -4,6 +4,7 @@ import { FiLoader, FiSearch } from "react-icons/fi";
 import {
   convertToUTCTimestamp,
   formatDateToMMDDYYYY,
+  formatPhoneNumberInput,
 } from "../../utils/helper";
 import { IoCalendarOutline } from "react-icons/io5";
 import Cookies from "js-cookie";
@@ -33,7 +34,7 @@ const Stores = () => {
   // Throttled function using lodash.throttle
   const throttledSearch = useCallback(
     _.throttle((query) => {
-      getCustomers(query);
+      getStores(query);
     }, 1000),
     []
   );
@@ -407,7 +408,7 @@ const StoreRow = ({ customer, setUpdate }) => {
         </span>
         <span className="w-full col-span-2 flex items-center justify-start h-full ">
           <span className="text-[13px] font-normal">
-            {customer?.phone || "N/A"}
+            {formatPhoneNumberInput(customer?.phone) || "N/A"}
           </span>
         </span>
         <span className="w-full col-span-3 flex items-center justify-start h-full ">
