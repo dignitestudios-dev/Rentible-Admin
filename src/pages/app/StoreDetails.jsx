@@ -271,6 +271,7 @@ const StoreDetails = () => {
         onConfirm={() => {
           setOpenApproved(false);
         }}
+        isApproved={isApproved}
       />
 
       <div className="w-full h-auto rounded-[18px] border border-gray-300 bg-white flex flex-col justify-start items-start">
