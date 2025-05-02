@@ -231,6 +231,7 @@ const StoreDetails = () => {
                   setOpenConfirm(true);
                   setIsApproved(false);
                 }}
+                disabled={profileLoading}
                 className="w-[130px] h-[49px] rounded-[8px] bg-[#FF3E46] text-white flex gap-2 items-center justify-center"
               >
                 <span className="text-[14px] font-normal leading-[21px] ">
@@ -244,6 +245,7 @@ const StoreDetails = () => {
                   setOpenConfirm(true);
                   setIsApproved(true);
                 }}
+                disabled={profileLoading}
                 className="w-[130px] h-[49px] rounded-[8px] bg-[#00DC67] text-white flex gap-2 items-center justify-center"
               >
                 <span className="text-[14px] font-normal leading-[21px] ">
