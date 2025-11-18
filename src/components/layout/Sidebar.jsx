@@ -5,7 +5,9 @@ import { sidebar } from "../../constants/sidebar";
 import { AppContext } from "../../context/AppContext";
 
 const Sidebar = () => {
-  const { sidebarOpen, setSidebarOpen } = useContext(AppContext);
+  const { sidebarOpen, setSidebarOpen, totalUnread, setSender ,setUid} =
+    useContext(AppContext);
+
   return (
     <div
       className={`w-full lg:w-[242.8px] h-[calc(100%-0rem)] flex justify-start items-start transition-all duration-300  absolute top-14 left-0 ${
@@ -24,6 +26,9 @@ const Sidebar = () => {
               dark_icon={link?.dark_icon}
               url={link?.url}
               sub={link?.sub || null}
+              badge={link?.title === "Messages" ? totalUnread : 0}
+              setSender={setSender}
+              setUid={setUid}
             />
           );
         })}

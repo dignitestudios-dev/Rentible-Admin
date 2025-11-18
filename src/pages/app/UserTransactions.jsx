@@ -573,11 +573,15 @@ const UserTransactions = () => {
                           key={key}
                           className="w-full grid grid-cols-11 h-[77px] text-[#202224] "
                         >
-                          <span className="w-full col-span-2 px-4 flex items-center justify-start h-full ">
-                            <span className="text-[13px] font-normal">
+                          <span className="w-full col-span-2 px-4 flex items-center justify-start h-full">
+                            <span
+                              title={rental?._id}
+                              className="text-[13px] font-normal break-all truncate max-w-[160px] cursor-help"
+                            >
                               {rental?._id}
                             </span>
                           </span>
+
                           <span className="w-full col-span-3  flex items-center gap-2 justify-start h-full ">
                             <span className="w-[44px] h-[44px] border border-[#F85E00] rounded-full flex items-center justify-center ">
                               <img

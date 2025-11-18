@@ -56,7 +56,7 @@ const ProductDetails = () => {
 
   const toggleActivation = async () => {
     try {
-      const response = await axios.post("/product/toggleActivation", {
+      const response = await axios.post("/admin/toggleProductActivation", {
         productId: product?._id,
         isActive: active,
       });
@@ -290,10 +290,10 @@ const ProductDetails = () => {
               </span>
 
               <button
-                // onClick={() => setActive((prev) => !prev)}
+                onClick={() => setActive((prev) => !prev)}
                 className={`w-[36px] h-[18px] rounded-full   flex ${
                   active
-                    ? "bg-[#F85E00]  cursor-none justify-end"
+                    ? "bg-[#F85E00]   justify-end"
                     : "justify-start bg-[#d9d9d9]"
                 }  p-[1.5px]  `}
               >
@@ -354,7 +354,7 @@ const ProductDetails = () => {
           <div className="w-full flex flex-col lg:flex-row justify-between items-start">
             <div className="w-full lg:w-[35%] h-full flex flex-col gap-1 justify-start items-start">
               <span className="text-[14px] font-medium leading-[21px]">
-                Pickup Location
+                Pick Up Location
               </span>
               <div className="w-auto flex gap-1 justify-start items-start">
                 <img

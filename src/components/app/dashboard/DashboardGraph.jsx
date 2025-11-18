@@ -90,7 +90,7 @@ const DashboardGraph = () => {
   const [selectedMonth, setSelectedMonth] = useState("Select Month");
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const getYearsArray = () => {
-    const startYear = 2025;
+    const startYear = 2024;
     const years = [];
     for (let year = startYear; year <= currentYear; year++) {
       years.push(year);
@@ -144,7 +144,9 @@ const DashboardGraph = () => {
         <h1 className="text-[16px] leading-[24px] text-[#121516] font-semibold">
           Sales Overview
         </h1>
+        
         <div className="relative flex gap-2">
+          
           <div className="relative z-[1000]">
             <button
               className="w-[124px]  py-2 flex items-center justify-center gap-[2px] bg-gray-100 rounded-md text-[11px] font-medium"
@@ -196,6 +198,7 @@ const DashboardGraph = () => {
               </div>
             )}
           </div>
+          
           <div>
             <button
               className="w-[86px] z-[1000] py-2 flex items-center capitalize justify-center gap-[2px] bg-gray-100 rounded-md text-[11px] font-medium"
@@ -229,9 +232,15 @@ const DashboardGraph = () => {
               </div>
             )}
           </div>
+          
         </div>
       </div>
+  <div className="w-full flex justify-start items-center py-2 px-4 bg-gray-50 rounded-md shadow-sm">
+    <h2 className="text-xl font-bold text-[#F85E00]">
+      Total Revenue: ${(sales?.sales?.reduce((acc, val) => acc + val, 0) || 0).toFixed(2)}
 
+    </h2>
+  </div>
       <div className="w-full flex flex-col justify-start items-start gap-2 col-span-3 h-full p-4">
         <div className="h-full w-full flex justify-center items-center">
           {salesLoading ? (

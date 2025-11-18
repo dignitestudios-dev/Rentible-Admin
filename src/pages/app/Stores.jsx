@@ -7,12 +7,10 @@ import {
   formatPhoneNumberInput,
 } from "../../utils/helper";
 import { IoCalendarOutline } from "react-icons/io5";
-import Cookies from "js-cookie";
 import axios from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 import _ from "lodash";
 import { RxCaretLeft, RxCaretRight, RxCross2 } from "react-icons/rx";
-import { BsCheckLg } from "react-icons/bs";
 import CustomerTableSkeleton from "../../skeletons/app/customers/CustomerTableSkeleton";
 import { useNavigate } from "react-router-dom";
 import { IoMdCheckmark } from "react-icons/io";
@@ -28,6 +26,7 @@ const Stores = () => {
   const [finalDate, setFinalDate] = useState(null);
   const [isApplied, setIsApplied] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
+  const [status, setStatus] = useState("all");
 
   const [active, setActive] = useState(false);
 
@@ -63,7 +62,7 @@ const Stores = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `/admin/stores?search=${query}${
+        `/admin/stores?status=${status}&search=${query}${
           initialDate
             ? `&startDate=${convertToUTCTimestamp(
                 formatDateToMMDDYYYY(initialDate)
@@ -78,7 +77,7 @@ const Stores = () => {
             : ""
         }&page=${currentPage}&limit=9`
       );
-      setCustomers(data?.data); // Store the actual data from the response
+      setCustomers(data?.data);
       setPagination(data?.pagination);
       setIsApplied(false);
     } catch (error) {
@@ -88,11 +87,12 @@ const Stores = () => {
       setLoading(false);
     }
   };
+
   //
 
   useEffect(() => {
     getStores();
-  }, [update, isApplied, currentPage]);
+  }, [update, isApplied, currentPage, status]); // added status here
 
   return (
     <div className="w-full h-auto  flex flex-col  py-4 px-2 lg:px-6 justify-start items-start gap-6">
@@ -101,6 +101,7 @@ const Stores = () => {
           <span className="text-[26px] md:text-[28px] lg:text-[32px] font-bold leading-[48px] text-[#202224]">
             Stores
           </span>
+
           <div className="w-auto flex justify-start items-center gap-3">
             <div className="relative w-[256px] bg-white h-[49px] flex items-start justify-start rounded-[8px] border border-gray-300">
               <span className="w-[40px] h-full flex items-center justify-center ">
@@ -203,6 +204,7 @@ const Stores = () => {
               </div>
             </div>
           </div>
+
           <DateFilterModal
             isOpen={openFilterFrom}
             setIsOpen={setOpenFilterFrom}
@@ -217,6 +219,61 @@ const Stores = () => {
             setDate={setFinalDate}
           />
         </div>
+      </div>
+      <div className="w-full flex gap-4 mb-4">
+        <button
+          className={`px-4 py-2 rounded-t-lg ${
+            status === "all"
+              ? "border-b-2 border-[#F85E00] text-[#F85E00]"
+              : "border-b-2 border-transparent text-gray-500"
+          }`}
+          onClick={() => {
+            setStatus("all");
+            setCurrentPage(1);
+          }}
+        >
+          All
+        </button>
+        <button
+          className={`px-4 py-2 rounded-t-lg ${
+            status === "approved"
+              ? "border-b-2 border-[#F85E00] text-[#F85E00]"
+              : "border-b-2 border-transparent text-gray-500"
+          }`}
+          onClick={() => {
+            setStatus("approved");
+            setCurrentPage(1);
+          }}
+        >
+          Approved
+        </button>
+        <button
+          className={`px-4 py-2 rounded-t-lg ${
+            status === "pending"
+              ? "border-b-2 border-[#F85E00] text-[#F85E00]"
+              : "border-b-2 border-transparent text-gray-500"
+          }`}
+          onClick={() => {
+            setStatus("pending");
+            setCurrentPage(1);
+          }}
+        >
+          Pending
+        </button>
+
+        <button
+          className={`px-4 py-2 rounded-t-lg ${
+            status === "rejected"
+              ? "border-b-2 border-[#F85E00] text-[#F85E00]"
+              : "border-b-2 border-transparent text-gray-500"
+          }`}
+          onClick={() => {
+            setStatus("rejected");
+            setCurrentPage(1);
+          }}
+        >
+          Rejected
+        </button>
       </div>
 
       <div className="w-full h-auto overflow-x-auto lg:overflow-x-hidden flex flex-col justify-start items-start">
@@ -340,16 +397,18 @@ const StoreRow = ({ customer, setUpdate }) => {
   const [openApproved, setOpenApproved] = useState(false);
   const [reporting, setReporting] = useState(false);
 
-  const approveUser = async (id, isApproved) => {
+  const approveUser = async (id, isApproved, reason = "") => {
     try {
       setReporting(true);
       const response = await axios.post("/admin/verifyStore", {
         storeId: id,
         status: isApproved ? "approved" : "rejected",
+        rejectReason: reason,
       });
       if (response?.data?.success) {
         setUpdate((prev) => !prev);
-        setOpenApproved(true);
+        setOpenApproved(false);
+        setOpenConfirm(false);
       }
     } catch (error) {
       ErrorToast(error?.response?.data?.message || "Something went wrong.");
@@ -363,8 +422,8 @@ const StoreRow = ({ customer, setUpdate }) => {
       <CustomerApproveModal
         isOpen={openConfirm}
         onRequestClose={() => setOpenConfirm(false)}
-        onConfirm={() => {
-          approveUser(customer?._id, isApproved);
+        onConfirm={(reason) => {
+          approveUser(customer?._id, isApproved, reason);
         }}
         isApproved={isApproved}
         loading={reporting}

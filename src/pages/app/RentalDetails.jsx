@@ -608,7 +608,7 @@ const RentalDetails = () => {
             <div className="w-full flex flex-col lg:flex-row justify-between items-start">
               <div className="w-full lg:w-[22%] h-full flex flex-col gap-1 justify-start items-start">
                 <span className="text-[14px] font-medium leading-[21px]">
-                  Pickup Location
+                  Pick Up Location
                 </span>
                 <div className="w-auto flex gap-1 justify-start items-start">
                   <img

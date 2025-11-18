@@ -27,7 +27,8 @@ import { getAuth } from "firebase/auth";
 import { useLocation, useParams } from "react-router-dom";
 
 const Messages = () => {
-  const { uid, setUid, sender, setSender } = useContext(AppContext);
+  const { uid, setUid, sender, setSender, setTotalUnread } =
+    useContext(AppContext);
 
   const { chatId } = useParams();
 
@@ -454,6 +455,11 @@ const Messages = () => {
       setSender(chat?.user);
     }
   }, [chats]);
+  
+  useEffect(() => {
+    const total = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
+    setTotalUnread(total);
+  }, [unreadCounts]);
 
   return (
     <>

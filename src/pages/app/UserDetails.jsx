@@ -28,7 +28,7 @@ const UserDetails = () => {
 
   const location = useLocation();
   const user = location?.state;
-
+  console.log(user, "user..<");
   const { id } = useParams();
 
   const [openFilterFrom, setOpenFilterFrom] = useState(false);

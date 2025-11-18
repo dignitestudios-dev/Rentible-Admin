@@ -10,6 +10,8 @@ import {
   NotificationToast,
   WarningToast,
 } from "../components/global/Toaster";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { db } from "../firebase/firebase";
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
@@ -18,8 +20,9 @@ export const AppContextProvider = ({ children }) => {
   const [show, setShow] = useState(false);
   const [notification, setNotification] = useState({ title: "", body: "" });
   const [notifications, setNotifications] = useState([]);
-
+  const [totalUnread, setTotalUnread] = useState(0);
   const [isTokenFound, setTokenFound] = useState(false);
+  const store = Cookies.get("store") ? JSON.parse(Cookies.get("store")) : null;
 
   // Send fcm to backend:
   const fetchToken = async () => {
@@ -66,8 +69,47 @@ export const AppContextProvider = ({ children }) => {
   // Chat related states:
   const [uid, setUid] = useState(null);
   const [sender, setSender] = useState(null);
+  const [unreadCounts, setUnreadCounts] = useState({});
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  useEffect(() => {
+    if (!store?.uid) return;
+
+    const chatsRef = collection(db, "chats");
+    const chatsQuery = query(
+      chatsRef,
+      where("users", "array-contains", store.uid)
+    );
+
+    const unsubscribeChats = onSnapshot(chatsQuery, (snapshot) => {
+      let unsubscribes = [];
+
+      snapshot.docs.forEach((chatDoc) => {
+        const unreadQuery = query(
+          collection(db, "chats", chatDoc.id, "messages"),
+          where("receiverId", "==", store.uid),
+          where("isSeen", "==", false)
+        );
+
+        const unsub = onSnapshot(unreadQuery, (msgSnapshot) => {
+          setUnreadCounts((prev) => ({
+            ...prev,
+            [chatDoc.id]: chatDoc.id === uid ? 0 : msgSnapshot.size, // ignore current chat
+          }));
+        });
+
+        unsubscribes.push(unsub);
+      });
+
+      return () => unsubscribes.forEach((u) => u());
+    });
+
+    return () => unsubscribeChats();
+  }, [store?.uid, uid]);
+  useEffect(() => {
+    const total = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
+    setTotalUnread(total);
+  }, [unreadCounts]);
 
   return (
     <AppContext.Provider
@@ -91,6 +133,8 @@ export const AppContextProvider = ({ children }) => {
         setSidebarOpen,
         sender,
         setSender,
+        totalUnread,
+        setTotalUnread,
       }}
     >
       {children}

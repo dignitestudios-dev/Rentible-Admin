@@ -3,14 +3,16 @@ import { useNavigate } from "react-router-dom";
 import axios from "../../../axios";
 import { ErrorToast, SuccessToast } from "../../global/Toaster";
 import { convertEpochTo12HourFormat } from "../../../utils/helper";
+import { FiLoader } from "react-icons/fi";
 
 const ProductCard = ({ product, setUpdate }) => {
   const navigate = useNavigate();
   const [active, setActive] = useState(product?.isActive);
-
+  const [loading, setLoading] = useState(false);
   const toggleActivation = async () => {
+    setLoading(true);
     try {
-      const response = await axios.post("/product/toggleActivation", {
+      const response = await axios.post("/admin/toggleProductActivation", {
         productId: product?._id,
         isActive: active,
       });
@@ -23,7 +25,7 @@ const ProductCard = ({ product, setUpdate }) => {
     } catch (error) {
       ErrorToast(error?.response?.data?.message || "Something went wrong.");
     } finally {
-      // test
+      setLoading(false);
     }
   };
 
@@ -42,12 +44,17 @@ const ProductCard = ({ product, setUpdate }) => {
           className="w-full h-full rounded-[14px] object-cover object-center"
         />
         <button
-          // onClick={() => setActive((prev) => !prev)}
-          className={`w-[36px] cursor-none h-[18px] rounded-full   flex ${
+          disabled={loading}
+          onClick={() => setActive((prev) => !prev)}
+          className={`w-[36px]  h-[18px] rounded-full   flex ${
             active ? "bg-[#F85E00] justify-end" : "justify-start bg-[#d9d9d9]"
           }  p-[1.5px]  absolute top-2 right-2`}
         >
-          <span className="w-[15px] h-[15px] rounded-full bg-white shadow "></span>
+          {loading ? (
+            <FiLoader className="text-md text-white" />
+          ) : (
+            <span className="w-[15.7px] h-[15.7px] rounded-full bg-white shadow "></span>
+          )}{" "}
         </button>
       </div>
       <div className="w-full relative xl:h-[calc(100%-193px)] mt-3 px-[1px] flex flex-col justify-start items-start gap-1">
@@ -70,7 +77,7 @@ const ProductCard = ({ product, setUpdate }) => {
         <div className="w-full flex min-h-16 justify-between items-start">
           <div className="w-[44%] h-full flex flex-col gap-0 justify-start items-start">
             <span className="text-[12px] font-medium leading-[21px]">
-              Pickup Location
+              Pick Up Location
             </span>
             <div className="w-auto flex gap-1 justify-start items-start">
               <img

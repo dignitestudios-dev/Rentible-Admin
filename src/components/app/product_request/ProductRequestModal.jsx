@@ -65,7 +65,14 @@ const ProductRequestModal = ({ isOpen, onRequestClose, request }) => {
                         className="w-[27px] h-[27px] rounded-full"
                       />
                     </span>
-                    <div className="w-auto flex flex-col justify-start items-start">
+                    <div
+                      onClick={() =>
+                        navigate(`/users/${request?.reportedByUser?._id}`, {
+                          state: request?.reportedByUser,
+                        })
+                      }
+                      className="w-auto cursor-pointer flex flex-col justify-start items-start"
+                    >
                       <h3 className="text-[16px] font-normal text-black leading-[20.1px]">
                         {request?.reportedByUser?.name || "N/A"}
                       </h3>
@@ -152,7 +159,26 @@ const ProductRequestModal = ({ isOpen, onRequestClose, request }) => {
         <span className="w-full my-2 h-[1px] bg-[#d4d4d4] rounded-full"></span>
 
         <div className="w-full h-auto flex justify-between items-center">
-          <div className="w-[45%] h-full flex flex-col gap-1 justify-start items-start">
+          <div
+            onClick={() => {
+              if (request?.product?.store) {
+                navigate(`/stores/${request?.product?.store._id}`, {
+                  state: request.store,
+                });
+              } else if (request?.user) {
+                navigate(`/users/${request.user._id}`, { state: request.user });
+              } else if (request?.booking) {
+                navigate(`/rental-tracking/${request.booking._id}`, {
+                  state: request?.booking,
+                });
+              } else if (request?.product) {
+                navigate(`/products/${request.product._id}`, {
+                  state: request.product,
+                });
+              }
+            }}
+            className="w-[45%] cursor-pointer h-full flex flex-col gap-1 justify-start items-start"
+          >
             <span className="text-[16px] font-normal leading-[20px] text-[#959393]">
               Reported{" "}
               {request?.user

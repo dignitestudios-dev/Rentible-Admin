@@ -175,15 +175,18 @@ const StoreDetails = () => {
   const [isApproved, setIsApproved] = useState(false);
   const [openApproved, setOpenApproved] = useState(false);
 
-  const approveUser = async (id, isApproved) => {
+  const approveUser = async (id, isApproved, reason = "") => {
+    setReporting(true);
     try {
-      setReporting(true);
       const response = await axios.post("/admin/verifyStore", {
         storeId: id,
         status: isApproved ? "approved" : "rejected",
+        rejectReason: reason,
       });
       if (response?.data?.success) {
         setOpenApproved(true);
+        setOpenConfirm(false);
+        getStoreDetail()
       }
     } catch (error) {
       ErrorToast(error?.response?.data?.message || "Something went wrong.");
@@ -220,51 +223,48 @@ const StoreDetails = () => {
               Store Details
             </span>
           </div>
-          {!(
-            profile?.identityStatus == "approved" ||
-            profile?.identityStatus == "rejected"
-          ) && (
-            <div className="w-auto flex justify-start items-center gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setOpenConfirm(true);
-                  setIsApproved(false);
-                }}
-                disabled={profileLoading}
-                className="w-[130px] h-[49px] rounded-[8px] bg-[#FF3E46] text-white flex gap-2 items-center justify-center"
-              >
-                <span className="text-[14px] font-normal leading-[21px] ">
-                  Reject
-                </span>
-                {/* {loading && <FiLoader className="animate-spin text-lg " />} */}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setOpenConfirm(true);
-                  setIsApproved(true);
-                }}
-                disabled={profileLoading}
-                className="w-[130px] h-[49px] rounded-[8px] bg-[#00DC67] text-white flex gap-2 items-center justify-center"
-              >
-                <span className="text-[14px] font-normal leading-[21px] ">
-                  Approve
-                </span>
-                {/* {loading && <FiLoader className="animate-spin text-lg " />} */}
-              </button>
-            </div>
-          )}
+          {!profileLoading &&
+            profile?.identityStatus &&
+            profile?.identityStatus !== "approved" &&
+            profile?.identityStatus !== "rejected" && (
+              <div className="w-auto flex justify-start items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpenConfirm(true);
+                    setIsApproved(false);
+                  }}
+                  disabled={profileLoading}
+                  className="w-[130px] h-[49px] rounded-[8px] bg-[#FF3E46] text-white flex gap-2 items-center justify-center"
+                >
+                  <span className="text-[14px] font-normal leading-[21px] ">
+                    Reject
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpenConfirm(true);
+                    setIsApproved(true);
+                  }}
+                  disabled={profileLoading}
+                  className="w-[130px] h-[49px] rounded-[8px] bg-[#00DC67] text-white flex gap-2 items-center justify-center"
+                >
+                  <span className="text-[14px] font-normal leading-[21px] ">
+                    Approve
+                  </span>
+                </button>
+              </div>
+            )}
         </div>
       </div>
 
       <CustomerApproveModal
         isOpen={openConfirm}
         onRequestClose={() => setOpenConfirm(false)}
-        onConfirm={() => {
-          approveUser(id, isApproved);
-        }}
+        onConfirm={(reason) => approveUser(id, isApproved, reason)}
         isApproved={isApproved}
+        loading={reporting}
       />
 
       <CustomerApproved
@@ -328,12 +328,12 @@ const StoreDetails = () => {
               <span className="text-[14px] font-normal leading-[24px]">
                 Email Address
               </span>
-              <span className="text-[14px] w-40 break-words font-normal text-[#818181] leading-[23px]">
+              <span className="text-[14px] text-nowrap w-60 break-words font-normal text-[#818181] leading-[23px]">
                 {profile?.email || "N/A"}
               </span>
             </div>
 
-            <div className="w-full h-full flex flex-col lg:pl-6 gap-1 justify-start items-start">
+            <div className="w-full h-full flex flex-col mx-10 lg:pl-6 gap-1 justify-start items-start">
               <span className="text-[14px] font-normal leading-[24px]">
                 Phone Number
               </span>
